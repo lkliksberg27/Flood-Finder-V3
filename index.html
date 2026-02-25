@@ -12,6 +12,21 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Pre-React error catcher — shows errors before any JS framework loads
+      window.__earlyErrors = [];
+      window.onerror = function(m,s,l,c,e) {
+        window.__earlyErrors.push(m + ' at ' + s + ':' + l);
+        var d = document.getElementById('__early_err');
+        if (!d) {
+          d = document.createElement('div');
+          d.id = '__early_err';
+          d.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#300;border-bottom:2px solid red;padding:8px;font:11px monospace;color:#fbbf24;max-height:30vh;overflow:auto;white-space:pre-wrap;';
+          document.body.prepend(d);
+        }
+        d.textContent = window.__earlyErrors.join('\n');
+      };
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
