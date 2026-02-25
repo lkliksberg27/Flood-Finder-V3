@@ -48,7 +48,7 @@ export default function AddLocationForm({ onSave, onClose }) {
     >
       <div className="flex items-center justify-between">
         <h3 className="text-white font-semibold text-sm">Add Watched Location</h3>
-        <button onClick={onClose} className="p-1 text-gray-500 hover:text-gray-300 rounded"><X className="w-4 h-4" /></button>
+        <button onClick={onClose} className="p-2 text-gray-500 hover:text-gray-300 rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center"><X className="w-5 h-5" /></button>
       </div>
 
       <input
@@ -56,7 +56,7 @@ export default function AddLocationForm({ onSave, onClose }) {
         placeholder="Label (e.g. Home, Office)"
         value={name}
         onChange={e => setName(e.target.value)}
-        className="w-full bg-[#0c1021] text-white px-3 py-2 rounded-lg text-sm border border-white/10 focus:border-blue-500 focus:outline-none"
+        className="w-full bg-[#0c1021] text-white px-3 py-2.5 rounded-lg text-base border border-white/10 focus:border-blue-500 focus:outline-none"
       />
 
       <div className="relative">
@@ -65,12 +65,12 @@ export default function AddLocationForm({ onSave, onClose }) {
           placeholder="Address"
           value={address}
           onChange={e => searchAddress(e.target.value)}
-          className="w-full bg-[#0c1021] text-white px-3 py-2 rounded-lg text-sm border border-white/10 focus:border-blue-500 focus:outline-none"
+          className="w-full bg-[#0c1021] text-white px-3 py-2.5 rounded-lg text-base border border-white/10 focus:border-blue-500 focus:outline-none"
         />
         {suggestions.length > 0 && (
           <div className="absolute z-20 left-0 right-0 mt-1 bg-[#1a1f35] border border-white/10 rounded-xl overflow-hidden shadow-xl">
             {suggestions.map(f => (
-              <button key={f.id} onClick={() => selectSuggestion(f)} className="w-full text-left px-3 py-2 text-xs text-gray-300 hover:bg-white/5 border-b border-white/5 last:border-0">
+              <button key={f.id} onClick={() => selectSuggestion(f)} className="w-full text-left px-3 py-3 text-sm text-gray-300 hover:bg-white/5 border-b border-white/5 last:border-0 min-h-[44px]">
                 {f.place_name}
               </button>
             ))}
@@ -106,7 +106,7 @@ export default function AddLocationForm({ onSave, onClose }) {
             <button
               key={level.value}
               onClick={() => setAlertLevel(level.value)}
-              className={`flex-1 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${alertLevel === level.value
+              className={`flex-1 min-h-[44px] py-2 rounded-lg text-xs font-semibold border transition-colors ${alertLevel === level.value
                 ? level.activeBg
                 : 'bg-white/5 text-gray-500 border-white/5'}`}
             >

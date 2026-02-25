@@ -72,13 +72,13 @@ export default function AlertCard({ sensor, index }) {
         {/* View on map button */}
         <Link
           to={createPageUrl('Map')}
-          className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+          className={`inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2.5 rounded-lg min-h-[44px] transition-colors ${
             isAlert
               ? 'bg-red-500/15 text-red-400 hover:bg-red-500/25'
               : 'bg-amber-500/15 text-amber-400 hover:bg-amber-500/25'
           }`}
         >
-          <MapPin className="w-3 h-3" />
+          <MapPin className="w-3.5 h-3.5" />
           View on map
         </Link>
       </div>

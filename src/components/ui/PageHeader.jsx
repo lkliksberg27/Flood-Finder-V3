@@ -11,7 +11,7 @@ export default function PageHeader({ title, subtitle, action, showBack = false, 
           {showBack && (
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center justify-center w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all flex-shrink-0 -ml-1"
+              className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all flex-shrink-0 -ml-1"
             >
               <ChevronLeft className="w-5 h-5 text-white" />
             </button>
@@ -26,9 +26,9 @@ export default function PageHeader({ title, subtitle, action, showBack = false, 
           {settingsLink && (
             <Link
               to="/Settings"
-              className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all"
+              className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all"
             >
-              <Settings className="w-4 h-4 text-gray-400" />
+              <Settings className="w-[18px] h-[18px] text-gray-400" />
             </Link>
           )}
         </div>
