@@ -103,8 +103,8 @@ export default function LocationsPage() {
         action={
           <button
             onClick={() => setShowAdd(v => !v)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
-              showAdd ? 'bg-white/10 text-gray-300' : 'bg-blue-600 hover:bg-blue-700 text-white'
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all active:scale-95 ${
+              showAdd ? 'bg-white/10 text-gray-300' : 'btn-primary text-white shadow-lg shadow-blue-500/20'
             }`}
           >
             <Plus className="w-4 h-4" />
@@ -131,7 +131,7 @@ export default function LocationsPage() {
             action={
               <button
                 onClick={() => setShowAdd(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2"
+                className="btn-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-95 shadow-lg shadow-blue-500/20 flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
                 Add First Place

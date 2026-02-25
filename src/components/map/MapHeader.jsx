@@ -10,27 +10,34 @@ export default function MapHeader({ sensors = [], cityName }) {
 
   return (
     <div className="absolute top-0 left-0 right-0 z-[1000]">
-      <div className="backdrop-blur-xl bg-[#0c1021]/85 border-b border-white/10">
-        <div className="px-4 pt-12 pb-3 safe-area-top">
+      {/* Gradient fade into map instead of hard border */}
+      <div className="bg-gradient-to-b from-[#0c1021] via-[#0c1021]/60 to-transparent pb-6">
+        <div className="px-4 pt-12 pb-1 safe-area-top">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Droplets className="w-5 h-5 text-blue-400" />
-              <h1 className="text-lg font-bold text-white">Flood Finder</h1>
+            <div>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
+                  <Droplets className="w-4.5 h-4.5 text-white" />
+                </div>
+                <h1 className="text-lg font-bold text-white">Flood Finder</h1>
+              </div>
               {cityName ? (
-                <span className="text-xs text-gray-500 ml-1">· {cityName}</span>
+                <p className="text-[11px] text-gray-500 ml-[42px] -mt-0.5">{cityName}</p>
               ) : null}
             </div>
             <div className="flex items-center gap-2">
-              {/* Status pill */}
+              {/* Status pill with glow */}
               {allClear ? (
-                <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 text-xs font-semibold">
+                <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 text-xs font-semibold"
+                  style={{ boxShadow: '0 0 12px rgba(52,211,153,0.15)' }}>
                   <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
                   All Clear
                 </span>
               ) : (
                 <Link
                   to={createPageUrl('Alerts')}
-                  className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-semibold"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-semibold"
+                  style={{ boxShadow: '0 0 12px rgba(248,113,113,0.2)' }}
                 >
                   <span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse" />
                   {alertCount > 0 ? `${alertCount} Flooding` : `${warnCount} Warning`}
@@ -39,18 +46,18 @@ export default function MapHeader({ sensors = [], cityName }) {
               {/* Settings gear */}
               <Link
                 to="/Settings"
-                className="flex items-center justify-center w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all"
+                className="flex items-center justify-center w-8 h-8 rounded-xl bg-white/10 hover:bg-white/15 active:scale-95 transition-all backdrop-blur-sm"
               >
-                <Settings className="w-4 h-4 text-gray-400" />
+                <Settings className="w-4 h-4 text-gray-300" />
               </Link>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Alert banner */}
+      {/* Alert banner with gradient */}
       {alertCount > 0 && (
-        <div className="bg-red-600/90 backdrop-blur-sm px-4 py-2.5 border-b border-red-500/40">
+        <div className="bg-gradient-to-r from-red-600/90 to-red-500/70 backdrop-blur-sm px-4 py-2.5 -mt-4">
           <p className="text-white text-sm font-semibold text-center">
             🚨 {alertCount} sensor{alertCount > 1 ? 's' : ''} reporting severe flooding nearby
           </p>

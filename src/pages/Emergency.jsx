@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { entities } from '@/api/firestoreService';
 import { useQuery } from '@tanstack/react-query';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Navigation } from 'lucide-react';
 import BottomNav from '@/components/ui/BottomNav';
 import PageHeader from '@/components/ui/PageHeader';
 import EmergencyRoutes from '@/components/routes/EmergencyRoutes';
@@ -86,9 +86,10 @@ export default function EmergencyPage() {
             {selectedRoute && (
               <button
                 onClick={() => setDrivingMode(true)}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl btn-primary text-white text-sm font-bold transition-all active:scale-95 shadow-lg shadow-blue-500/20"
               >
-                🚗 Start Driving
+                <Navigation className="w-4 h-4" />
+                Start Driving
               </button>
             )}
           </div>

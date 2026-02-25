@@ -98,49 +98,64 @@ export default function SensorsPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-4"
+              className="bg-white/[0.04] border border-white/[0.08] rounded-2xl overflow-hidden flex"
             >
-              {/* Top row */}
-              <div className="flex items-start justify-between gap-3 mb-3">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-full flex-shrink-0 ${cfg.dot}`} />
-                    <span className="text-white font-semibold text-sm truncate">{sensor.name}</span>
-                  </div>
-                  <p className="text-gray-500 text-xs mt-0.5 ml-4">{sensor.deviceId}</p>
-                </div>
-                <span className={`flex-shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${cfg.bg} ${cfg.color}`}>
-                  {cfg.label}
-                </span>
+              {/* Water level bar on left edge */}
+              <div className="w-1.5 bg-white/[0.06] flex-shrink-0 relative">
+                <motion.div
+                  initial={{ height: 0 }}
+                  animate={{ height: `${Math.min(100, Math.round((sensor.waterLevelCm / 100) * 100))}%` }}
+                  transition={{ delay: i * 0.03 + 0.2, duration: 0.5, ease: 'easeOut' }}
+                  className="absolute bottom-0 left-0 right-0 rounded-t-full"
+                  style={{
+                    background: sensor.status === 'ALERT' ? '#f87171' : sensor.status === 'WARN' ? '#fbbf24' : '#34d399',
+                  }}
+                />
               </div>
 
-              {/* Stats row */}
-              <div className="grid grid-cols-3 gap-1.5">
-                {/* Water level */}
-                <div className="bg-white/[0.04] rounded-xl px-2 py-2">
-                  <div className="flex items-center gap-1 mb-0.5">
-                    <Droplets className="w-3 h-3 text-blue-400 flex-shrink-0" />
-                    <span className="text-gray-500 text-[10px]">Water</span>
+              <div className="flex-1 p-4">
+                {/* Top row */}
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${cfg.dot}`} />
+                      <span className="text-white font-semibold text-sm truncate">{sensor.name}</span>
+                    </div>
+                    <p className="text-gray-500 text-xs mt-0.5 ml-4">{sensor.deviceId}</p>
                   </div>
-                  <p className={`text-sm font-bold ${cfg.color}`}>{sensor.waterLevelCm} cm</p>
+                  <span className={`flex-shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${cfg.bg} ${cfg.color}`}>
+                    {cfg.label}
+                  </span>
                 </div>
 
-                {/* Battery */}
-                <div className="bg-white/[0.04] rounded-xl px-2 py-2">
-                  <div className="flex items-center gap-1 mb-0.5">
-                    <BatteryIcon voltage={sensor.batteryV} />
-                    <span className="text-gray-500 text-[10px]">Battery</span>
+                {/* Stats row */}
+                <div className="grid grid-cols-3 gap-1.5">
+                  {/* Water level */}
+                  <div className="bg-white/[0.04] rounded-xl px-2 py-2">
+                    <div className="flex items-center gap-1 mb-0.5">
+                      <Droplets className="w-3 h-3 text-blue-400 flex-shrink-0" />
+                      <span className="text-gray-500 text-[10px]">Water</span>
+                    </div>
+                    <p className={`text-sm font-bold ${cfg.color}`}>{sensor.waterLevelCm} cm</p>
                   </div>
-                  <p className={`text-sm font-bold ${batteryColor(sensor.batteryV)}`}>{pct}%</p>
-                </div>
 
-                {/* Last seen */}
-                <div className="bg-white/[0.04] rounded-xl px-2 py-2">
-                  <div className="flex items-center gap-1 mb-0.5">
-                    <Clock className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                    <span className="text-gray-500 text-[10px] truncate">Seen</span>
+                  {/* Battery */}
+                  <div className="bg-white/[0.04] rounded-xl px-2 py-2">
+                    <div className="flex items-center gap-1 mb-0.5">
+                      <BatteryIcon voltage={sensor.batteryV} />
+                      <span className="text-gray-500 text-[10px]">Battery</span>
+                    </div>
+                    <p className={`text-sm font-bold ${batteryColor(sensor.batteryV)}`}>{pct}%</p>
                   </div>
-                  <p className="text-sm font-bold text-gray-300">{timeAgo(sensor.lastSeen)}</p>
+
+                  {/* Last seen */}
+                  <div className="bg-white/[0.04] rounded-xl px-2 py-2">
+                    <div className="flex items-center gap-1 mb-0.5">
+                      <Clock className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                      <span className="text-gray-500 text-[10px] truncate">Seen</span>
+                    </div>
+                    <p className="text-sm font-bold text-gray-300">{timeAgo(sensor.lastSeen)}</p>
+                  </div>
                 </div>
               </div>
             </motion.div>

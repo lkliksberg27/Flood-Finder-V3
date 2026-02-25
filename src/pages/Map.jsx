@@ -247,12 +247,17 @@ export default function MapPage() {
         m.addLayer({ id: fillId, type: 'fill', source: srcId, paint: { 'fill-color': fillColor, 'fill-opacity': depthAlpha } });
         m.addLayer({ id: strokeId, type: 'line', source: srcId, paint: { 'line-color': strokeColor, 'line-width': 2, 'line-opacity': 1, 'line-dasharray': sensor.status === 'OK' ? [1] : [2, 1.5] } });
 
+        const size = sensor.status === 'ALERT' ? 24 : 20;
         const el = document.createElement('div');
-        el.style.cssText = `position:relative;width:14px;height:14px;border-radius:50%;background:#0f172a;border:2.5px solid ${color};box-shadow:0 0 8px ${color};cursor:pointer;`;
-        // Add pulsing ring for ALERT sensors
-        if (sensor.status === 'ALERT') {
+        el.style.cssText = `position:relative;width:${size}px;height:${size}px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 8px ${color}80, 0 0 20px ${color}40;cursor:pointer;transition:transform 0.2s;`;
+        // White inner dot
+        const inner = document.createElement('div');
+        inner.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:4px;height:4px;border-radius:50%;background:white;';
+        el.appendChild(inner);
+        // Pulsing ring for ALERT/WARN sensors
+        if (sensor.status !== 'OK') {
           const pulse = document.createElement('div');
-          pulse.style.cssText = `position:absolute;inset:-6px;border-radius:50%;border:2px solid ${color};animation:sensorPulse 1.5s ease-out infinite;pointer-events:none;`;
+          pulse.style.cssText = `position:absolute;inset:-8px;border-radius:50%;border:2px solid ${color};animation:sensorPulse ${sensor.status === 'ALERT' ? '1.2s' : '2s'} ease-out infinite;pointer-events:none;`;
           el.appendChild(pulse);
         }
         const mk = new mapboxgl.Marker({ element: el, anchor: 'center' })
@@ -264,25 +269,38 @@ export default function MapPage() {
           const lastSeen = sensor.lastSeen ? new Date(sensor.lastSeen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
           const battPct = sensor.batteryV ? Math.min(100, Math.max(0, Math.round(((sensor.batteryV - 3.0) / (4.2 - 3.0)) * 100))) : null;
           const battColor = battPct !== null ? (battPct <= 20 ? '#f87171' : battPct <= 40 ? '#fbbf24' : '#34d399') : '#6b7280';
-          popupRef.current = new mapboxgl.Popup({ closeButton: true, offset: 12, className: 'sensor-popup' })
+          const waterPct = Math.min(100, Math.round((sensor.waterLevelCm / 100) * 100));
+          const statusLabel = sensor.status === 'OK' ? '✓ Clear' : sensor.status === 'WARN' ? '⚠ Warning' : '🚨 Flooding';
+          const statusBg = sensor.status === 'ALERT' ? 'rgba(239,68,68,0.15)' : sensor.status === 'WARN' ? 'rgba(245,158,11,0.15)' : 'rgba(16,185,129,0.15)';
+          popupRef.current = new mapboxgl.Popup({ closeButton: true, offset: 14, className: 'sensor-popup' })
             .setLngLat([sensor.lng, sensor.lat])
             .setHTML(`
-              <div style="background:#151a2e;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:16px;min-width:210px;color:white;font-family:Inter,sans-serif;">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-                  <span style="font-weight:700;font-size:15px;">${sensor.name}</span>
-                  <span style="font-size:12px;font-weight:700;color:${color};padding:3px 8px;border-radius:8px;background:${sensor.status === 'ALERT' ? 'rgba(239,68,68,0.15)' : sensor.status === 'WARN' ? 'rgba(245,158,11,0.15)' : 'rgba(16,185,129,0.15)'};">${sensor.status === 'OK' ? '✓ Clear' : sensor.status === 'WARN' ? '⚠ Warning' : '🚨 Flooding'}</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:7px;">
-                  <span style="color:#9ca3af;font-size:13px;">Water level</span>
-                  <span style="font-size:13px;font-weight:600;">${sensor.waterLevelCm} cm</span>
-                </div>
-                ${battPct !== null ? `<div style="display:flex;justify-content:space-between;margin-bottom:7px;">
-                  <span style="color:#9ca3af;font-size:13px;">Battery</span>
-                  <span style="font-size:13px;font-weight:600;color:${battColor};">${battPct}%</span>
-                </div>` : ''}
-                <div style="display:flex;justify-content:space-between;">
-                  <span style="color:#9ca3af;font-size:13px;">Last update</span>
-                  <span style="font-size:13px;color:#6b7280;">${lastSeen}</span>
+              <div style="background:linear-gradient(180deg,#1a1f35,#151a2e);border:1px solid rgba(255,255,255,0.1);border-radius:16px;overflow:hidden;min-width:240px;color:white;font-family:Inter,system-ui,sans-serif;">
+                <div style="height:4px;background:${color};"></div>
+                <div style="padding:14px 16px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                    <span style="font-weight:700;font-size:16px;">${sensor.name}</span>
+                    <span style="font-size:11px;font-weight:700;color:${color};padding:4px 10px;border-radius:10px;background:${statusBg};">${statusLabel}</span>
+                  </div>
+                  <div style="margin-bottom:10px;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                      <span style="color:#9ca3af;font-size:12px;">Water level</span>
+                      <span style="font-size:13px;font-weight:700;">${sensor.waterLevelCm} cm</span>
+                    </div>
+                    <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;">
+                      <div style="height:100%;width:${waterPct}%;background:${color};border-radius:3px;transition:width 0.3s;"></div>
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:12px;">
+                    ${battPct !== null ? `<div style="flex:1;">
+                      <span style="color:#9ca3af;font-size:11px;display:block;">Battery</span>
+                      <span style="font-size:13px;font-weight:600;color:${battColor};">${battPct}%</span>
+                    </div>` : ''}
+                    <div style="flex:1;">
+                      <span style="color:#9ca3af;font-size:11px;display:block;">Last seen</span>
+                      <span style="font-size:13px;color:#9ca3af;">${lastSeen}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             `)
@@ -343,6 +361,8 @@ export default function MapPage() {
       )}
 
       <MapLegend />
+      {/* Bottom gradient overlay anchoring controls */}
+      <div className="absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-t from-[#0c1021]/70 to-transparent pointer-events-none z-[99]" />
       <BottomNav />
     </div>
   );
