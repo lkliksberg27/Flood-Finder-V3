@@ -1,5 +1,5 @@
-// Flood detection: sensor must be within 1–20m of the route line
-const FLOOD_DETECTION_RADIUS_M = 20;
+// Flood detection: sensor must be within 50m of the route line
+const FLOOD_DETECTION_RADIUS_M = 50;
 
 export function checkRouteFlooding(route, sensors) {
   if (!route?.coordinates || !sensors?.length) return [];

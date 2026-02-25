@@ -287,7 +287,7 @@ export default function DrivingMode({ route, course, sensors, onClose, locationE
       <div className="flex-1" />
 
       {/* ── BOTTOM PANEL ── */}
-      <div className="relative z-10 px-4 pb-8 space-y-3">
+      <div className="relative z-10 px-4 space-y-3" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 24px)' }}>
         {/* Route info bar */}
         <div className="bg-black/75 backdrop-blur-xl rounded-2xl px-5 py-4 flex items-center justify-between">
           <div>
