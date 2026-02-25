@@ -248,7 +248,13 @@ export default function MapPage() {
         m.addLayer({ id: strokeId, type: 'line', source: srcId, paint: { 'line-color': strokeColor, 'line-width': 2, 'line-opacity': 1, 'line-dasharray': sensor.status === 'OK' ? [1] : [2, 1.5] } });
 
         const el = document.createElement('div');
-        el.style.cssText = `width:14px;height:14px;border-radius:50%;background:#0f172a;border:2.5px solid ${color};box-shadow:0 0 8px ${color};cursor:pointer;`;
+        el.style.cssText = `position:relative;width:14px;height:14px;border-radius:50%;background:#0f172a;border:2.5px solid ${color};box-shadow:0 0 8px ${color};cursor:pointer;`;
+        // Add pulsing ring for ALERT sensors
+        if (sensor.status === 'ALERT') {
+          const pulse = document.createElement('div');
+          pulse.style.cssText = `position:absolute;inset:-6px;border-radius:50%;border:2px solid ${color};animation:sensorPulse 1.5s ease-out infinite;pointer-events:none;`;
+          el.appendChild(pulse);
+        }
         const mk = new mapboxgl.Marker({ element: el, anchor: 'center' })
           .setLngLat([sensor.lng, sensor.lat])
           .addTo(m);
@@ -256,19 +262,24 @@ export default function MapPage() {
         el.addEventListener('click', () => {
           popupRef.current?.remove();
           const lastSeen = sensor.lastSeen ? new Date(sensor.lastSeen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
+          const battPct = sensor.batteryV ? Math.min(100, Math.max(0, Math.round(((sensor.batteryV - 3.0) / (4.2 - 3.0)) * 100))) : null;
+          const battColor = battPct !== null ? (battPct <= 20 ? '#f87171' : battPct <= 40 ? '#fbbf24' : '#34d399') : '#6b7280';
           popupRef.current = new mapboxgl.Popup({ closeButton: true, offset: 12, className: 'sensor-popup' })
             .setLngLat([sensor.lng, sensor.lat])
             .setHTML(`
               <div style="background:#151a2e;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:16px;min-width:210px;color:white;font-family:Inter,sans-serif;">
-                <div style="font-weight:700;font-size:15px;margin-bottom:10px;">${sensor.name}</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                  <span style="font-weight:700;font-size:15px;">${sensor.name}</span>
+                  <span style="font-size:12px;font-weight:700;color:${color};padding:3px 8px;border-radius:8px;background:${sensor.status === 'ALERT' ? 'rgba(239,68,68,0.15)' : sensor.status === 'WARN' ? 'rgba(245,158,11,0.15)' : 'rgba(16,185,129,0.15)'};">${sensor.status === 'OK' ? '✓ Clear' : sensor.status === 'WARN' ? '⚠ Warning' : '🚨 Flooding'}</span>
+                </div>
                 <div style="display:flex;justify-content:space-between;margin-bottom:7px;">
                   <span style="color:#9ca3af;font-size:13px;">Water level</span>
                   <span style="font-size:13px;font-weight:600;">${sensor.waterLevelCm} cm</span>
                 </div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:7px;">
-                  <span style="color:#9ca3af;font-size:13px;">Status</span>
-                  <span style="font-size:13px;font-weight:700;color:${color};">${sensor.status === 'OK' ? '✓ Clear' : sensor.status === 'WARN' ? '⚠ Warning' : '🚨 Flooding'}</span>
-                </div>
+                ${battPct !== null ? `<div style="display:flex;justify-content:space-between;margin-bottom:7px;">
+                  <span style="color:#9ca3af;font-size:13px;">Battery</span>
+                  <span style="font-size:13px;font-weight:600;color:${battColor};">${battPct}%</span>
+                </div>` : ''}
                 <div style="display:flex;justify-content:space-between;">
                   <span style="color:#9ca3af;font-size:13px;">Last update</span>
                   <span style="font-size:13px;color:#6b7280;">${lastSeen}</span>
@@ -292,7 +303,7 @@ export default function MapPage() {
       <style>{`
         .mapboxgl-popup-content { background:transparent!important;padding:0!important;box-shadow:none!important; }
         .mapboxgl-popup-tip { display:none!important; }
-        .mapboxgl-ctrl-bottom-right { bottom:160px!important; right:12px!important; }
+        .mapboxgl-ctrl-bottom-right { bottom:calc(env(safe-area-inset-bottom, 0px) + 160px)!important; right:12px!important; }
         .mapboxgl-ctrl-group { background:white!important;border:none!important;box-shadow:0 2px 8px rgba(0,0,0,0.15)!important; }
         .mapboxgl-ctrl-logo { display:none!important; }
         .mapboxgl-ctrl-attrib { display:none!important; }

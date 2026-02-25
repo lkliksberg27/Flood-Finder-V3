@@ -10,7 +10,20 @@ import {
   query,
   orderBy,
   serverTimestamp,
+  Timestamp,
 } from 'firebase/firestore';
+
+// Convert Firestore Timestamps to ISO strings so the rest of the app works
+function convertTimestamps(obj) {
+  if (!obj || typeof obj !== 'object') return obj;
+  const result = { ...obj };
+  for (const key of Object.keys(result)) {
+    if (result[key] instanceof Timestamp) {
+      result[key] = result[key].toDate().toISOString();
+    }
+  }
+  return result;
+}
 
 function createEntity(collectionName) {
   const colRef = collection(db, collectionName);
@@ -27,8 +40,17 @@ function createEntity(collectionName) {
         q = colRef;
       }
 
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      try {
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(d => convertTimestamps({ id: d.id, ...d.data() }));
+      } catch (e) {
+        // If orderBy fails (missing index), fallback to unordered
+        if (sortParam) {
+          const snapshot = await getDocs(colRef);
+          return snapshot.docs.map(d => convertTimestamps({ id: d.id, ...d.data() }));
+        }
+        throw e;
+      }
     },
 
     async create(data) {
@@ -52,9 +74,15 @@ function createEntity(collectionName) {
     },
 
     subscribe(callback) {
+      let initialLoad = true;
       const unsubscribe = onSnapshot(colRef, (snapshot) => {
+        // Skip the initial snapshot (all docs come as 'added') to avoid duplicate refetches
+        if (initialLoad) {
+          initialLoad = false;
+          return;
+        }
         snapshot.docChanges().forEach((change) => {
-          const data = { id: change.doc.id, ...change.doc.data() };
+          const data = convertTimestamps({ id: change.doc.id, ...change.doc.data() });
           if (change.type === 'added') {
             callback({ type: 'create', id: data.id, data });
           } else if (change.type === 'modified') {

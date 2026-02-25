@@ -20,7 +20,7 @@ export default function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50">
-      <div className="backdrop-blur-2xl bg-[#0b0f1e]/95 border-t border-white/[0.06]">
+      <div className="backdrop-blur-2xl bg-[#0b0f1e]/95 border-t border-white/[0.06]" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         <div className="flex justify-around items-end h-[72px] pb-2 max-w-lg mx-auto px-1">
           {tabs.map((tab) => {
             const isActive = currentPage.toLowerCase() === tab.page.toLowerCase();
