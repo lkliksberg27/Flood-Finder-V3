@@ -114,18 +114,18 @@ export default function SensorsPage() {
               </div>
 
               {/* Stats row */}
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-1.5">
                 {/* Water level */}
-                <div className="bg-white/[0.04] rounded-xl px-3 py-2">
+                <div className="bg-white/[0.04] rounded-xl px-2 py-2">
                   <div className="flex items-center gap-1 mb-0.5">
-                    <Droplets className="w-3 h-3 text-blue-400" />
+                    <Droplets className="w-3 h-3 text-blue-400 flex-shrink-0" />
                     <span className="text-gray-500 text-[10px]">Water</span>
                   </div>
                   <p className={`text-sm font-bold ${cfg.color}`}>{sensor.waterLevelCm} cm</p>
                 </div>
 
                 {/* Battery */}
-                <div className="bg-white/[0.04] rounded-xl px-3 py-2">
+                <div className="bg-white/[0.04] rounded-xl px-2 py-2">
                   <div className="flex items-center gap-1 mb-0.5">
                     <BatteryIcon voltage={sensor.batteryV} />
                     <span className="text-gray-500 text-[10px]">Battery</span>
@@ -134,10 +134,10 @@ export default function SensorsPage() {
                 </div>
 
                 {/* Last seen */}
-                <div className="bg-white/[0.04] rounded-xl px-3 py-2">
+                <div className="bg-white/[0.04] rounded-xl px-2 py-2">
                   <div className="flex items-center gap-1 mb-0.5">
-                    <Clock className="w-3 h-3 text-gray-400" />
-                    <span className="text-gray-500 text-[10px]">Last seen</span>
+                    <Clock className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                    <span className="text-gray-500 text-[10px] truncate">Seen</span>
                   </div>
                   <p className="text-sm font-bold text-gray-300">{timeAgo(sensor.lastSeen)}</p>
                 </div>

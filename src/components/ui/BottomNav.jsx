@@ -30,7 +30,7 @@ export default function BottomNav() {
               <Link
                 key={tab.name}
                 to={createPageUrl(tab.page)}
-                className="flex flex-col items-center justify-end gap-1 pb-1 px-2"
+                className="flex flex-col items-center justify-end gap-0.5 pb-1 px-1 min-w-[44px] min-h-[44px]"
               >
                 <motion.div
                   whileTap={{ scale: 0.82 }}
