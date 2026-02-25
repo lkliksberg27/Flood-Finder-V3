@@ -158,7 +158,7 @@ export default function CourseCard({
                   <button
                     onClick={(e) => { e.stopPropagation(); handleGenerateRoutes(); }}
                     disabled={generatingRoutes}
-                    className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl btn-primary text-white text-sm font-bold transition-all active:scale-95 shadow-lg shadow-blue-500/20 disabled:opacity-50"
                   >
                     {generatingRoutes ? <><Loader2 className="w-4 h-4 animate-spin" />Loading...</> : <><Navigation className="w-4 h-4" />Get Routes</>}
                   </button>
@@ -201,10 +201,10 @@ export default function CourseCard({
                     {activeRoute && (
                       <button
                         onClick={(e) => { e.stopPropagation(); onDrive(activeRoute); }}
-                        className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors"
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl btn-primary text-white text-sm font-bold transition-all active:scale-95 shadow-lg shadow-blue-500/20"
                       >
-                        <Navigation className="w-3 h-3" />
-                        Drive
+                        <Navigation className="w-4 h-4" />
+                        Start Driving
                       </button>
                     )}
                   </div>

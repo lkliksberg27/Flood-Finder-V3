@@ -1,7 +1,8 @@
 import React from 'react';
 import { entities } from '@/api/firestoreService';
 import { useQuery } from '@tanstack/react-query';
-import { Bell, Loader2, Settings } from 'lucide-react';
+import { Bell, Settings } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Link } from 'react-router-dom';
 import BottomNav from '@/components/ui/BottomNav';
 import AlertCard from '@/components/alerts/AlertCard';
@@ -28,8 +29,25 @@ export default function AlertsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0c1021] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
+      <div className="min-h-screen bg-[#0c1021] pb-24 flex flex-col">
+        <div className="backdrop-blur-xl bg-[#0c1021]/80 border-b border-white/10 sticky top-0 z-10">
+          <div className="px-4 pt-12 pb-4 safe-area-top">
+            <div className="flex items-center gap-3">
+              <Skeleton className="w-10 h-10 rounded-xl" />
+              <div className="space-y-2">
+                <Skeleton className="h-5 w-32 rounded-md" />
+                <Skeleton className="h-3 w-48 rounded-md" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="px-4 py-6 space-y-4">
+          <div className="grid grid-cols-3 gap-2">
+            {[1,2,3].map(i => <Skeleton key={i} className="h-20 rounded-2xl" />)}
+          </div>
+          {[1,2,3].map(i => <Skeleton key={i} className="h-32 rounded-2xl" />)}
+        </div>
+        <BottomNav />
       </div>
     );
   }

@@ -287,7 +287,7 @@ export default function EmergencyRoutes({ onRouteReady, sensors = [], alertRadiu
       <button
         onClick={handleFastestRoute}
         disabled={loading}
-        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-red-600 hover:bg-red-700 disabled:bg-red-600/50 text-white text-sm font-semibold transition-colors"
+        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl btn-danger text-white text-sm font-bold transition-all active:scale-95 disabled:opacity-50"
       >
         {loading ? (
           <><Loader2 className="w-4 h-4 animate-spin" />Finding fastest route...</>

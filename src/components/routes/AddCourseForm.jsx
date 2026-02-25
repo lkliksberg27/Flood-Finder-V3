@@ -277,7 +277,7 @@ export default function AddCourseForm({ onClose, onSave }) {
       <Button
         onClick={handleSave}
         disabled={isSaving || !endCoords || !name.trim()}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2"
+        className="w-full btn-primary text-white font-bold py-2 shadow-lg shadow-blue-500/20 active:scale-95 transition-all"
       >
         {isSaving ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Saving...</> : <><Check className="w-4 h-4 mr-2" />Save Location</>}
       </Button>

@@ -119,7 +119,7 @@ export default function AddLocationForm({ onSave, onClose }) {
       <button
         onClick={handleSave}
         disabled={!name || !coords || saving}
-        className="w-full py-2 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+        className="w-full py-2.5 rounded-xl btn-primary disabled:opacity-40 text-white text-sm font-bold transition-all active:scale-95 shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2"
       >
         {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />}
         Save Location
