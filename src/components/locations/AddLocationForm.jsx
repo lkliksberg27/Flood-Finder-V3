@@ -44,7 +44,7 @@ export default function AddLocationForm({ onSave, onClose }) {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="bg-[#151a2e] border border-white/10 rounded-xl p-4 space-y-3"
+      className="bg-[#151a2e] border border-white/10 rounded-2xl p-4 space-y-3"
     >
       <div className="flex items-center justify-between">
         <h3 className="text-white font-semibold text-sm">Add Watched Location</h3>
@@ -119,7 +119,7 @@ export default function AddLocationForm({ onSave, onClose }) {
       <button
         onClick={handleSave}
         disabled={!name || !coords || saving}
-        className="w-full py-2.5 rounded-xl btn-primary disabled:opacity-40 text-white text-sm font-bold transition-all active:scale-95 shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2"
+        className="w-full py-2.5 rounded-xl btn-primary disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold transition-all active:scale-95 shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2"
       >
         {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />}
         Save Location

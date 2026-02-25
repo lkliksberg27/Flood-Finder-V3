@@ -9,7 +9,7 @@ export default function AlertSummary({ sensors }) {
   return (
     <div className="grid grid-cols-3 gap-2 mb-6">
       <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-3 relative overflow-hidden">
-        <div className="absolute -top-3 -right-3 w-16 h-16 bg-red-500/10 rounded-full blur-xl" />
+        <div className="absolute inset-0 bg-red-500/10 rounded-full blur-xl scale-150" />
         <div className="relative">
           <div className="flex items-center gap-1.5 mb-1.5">
             <AlertTriangle className="w-4 h-4 text-red-400" />
@@ -20,7 +20,7 @@ export default function AlertSummary({ sensors }) {
       </div>
 
       <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-3 relative overflow-hidden">
-        <div className="absolute -top-3 -right-3 w-16 h-16 bg-amber-500/10 rounded-full blur-xl" />
+        <div className="absolute inset-0 bg-amber-500/10 rounded-full blur-xl scale-150" />
         <div className="relative">
           <div className="flex items-center gap-1.5 mb-1.5">
             <AlertCircle className="w-4 h-4 text-amber-400" />
@@ -31,7 +31,7 @@ export default function AlertSummary({ sensors }) {
       </div>
 
       <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-3 relative overflow-hidden">
-        <div className="absolute -top-3 -right-3 w-16 h-16 bg-blue-500/10 rounded-full blur-xl" />
+        <div className="absolute inset-0 bg-blue-500/10 rounded-full blur-xl scale-150" />
         <div className="relative">
           <div className="flex items-center gap-1.5 mb-1.5">
             <Activity className="w-4 h-4 text-blue-400" />

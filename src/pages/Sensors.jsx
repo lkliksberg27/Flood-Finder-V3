@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { entities } from '@/api/firestoreService';
 import { useQuery } from '@tanstack/react-query';
 import PullToRefresh from '@/components/ui/PullToRefresh';
-import { Battery, BatteryLow, BatteryWarning, Droplets, Clock } from 'lucide-react';
+import { Battery, BatteryLow, BatteryWarning, Droplets, Clock, Search } from 'lucide-react';
 import BottomNav from '@/components/ui/BottomNav';
 import PageHeader from '@/components/ui/PageHeader';
 import LoadingScreen from '@/components/ui/LoadingScreen';
+import EmptyState from '@/components/ui/EmptyState';
 import { motion } from 'framer-motion';
 
 const STATUS_CONFIG = {
@@ -87,7 +88,11 @@ export default function SensorsPage() {
       <PullToRefresh onRefresh={refetch}>
       <div className="px-4 py-4 space-y-3">
         {filtered.length === 0 && (
-          <div className="text-center text-gray-500 py-16">No sensors in this category</div>
+          <EmptyState
+            icon={Search}
+            title="No sensors found"
+            description={`No sensors with "${filter === 'WARN' ? 'Warning' : filter === 'ALERT' ? 'Flooding' : filter}" status right now.`}
+          />
         )}
         {filtered.map((sensor, i) => {
           const cfg = STATUS_CONFIG[sensor.status] || STATUS_CONFIG.OK;

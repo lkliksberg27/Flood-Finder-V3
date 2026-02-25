@@ -105,7 +105,7 @@ export default function AddCourseForm({ onClose, onSave }) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 10 }}
-      className="bg-[#151a2e] rounded-xl border border-white/10 p-4 space-y-4"
+      className="bg-[#151a2e] rounded-2xl border border-white/10 p-4 space-y-4"
     >
       <div className="flex items-center justify-between">
         <h3 className="text-white font-semibold text-base">Add Location</h3>
@@ -277,7 +277,7 @@ export default function AddCourseForm({ onClose, onSave }) {
       <Button
         onClick={handleSave}
         disabled={isSaving || !endCoords || !name.trim()}
-        className="w-full btn-primary text-white font-bold py-2 shadow-lg shadow-blue-500/20 active:scale-95 transition-all"
+        className="w-full btn-primary text-white font-bold py-2 shadow-lg shadow-blue-500/20 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {isSaving ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Saving...</> : <><Check className="w-4 h-4 mr-2" />Save Location</>}
       </Button>
