@@ -97,6 +97,8 @@ export default function MapPage() {
 
     map.current.on('load', () => {
       setMapReady(true);
+      // Ensure canvas sizes correctly after first paint (fixes mobile blank map)
+      requestAnimationFrame(() => map.current?.resize());
     });
 
     return () => {
@@ -361,8 +363,8 @@ export default function MapPage() {
       )}
 
       <MapLegend />
-      {/* Bottom gradient overlay anchoring controls */}
-      <div className="absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-t from-[#0c1021]/70 to-transparent pointer-events-none z-[99]" />
+      {/* Subtle bottom fade for nav bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#0c1021]/50 to-transparent pointer-events-none z-[99]" />
       <BottomNav />
     </div>
   );
