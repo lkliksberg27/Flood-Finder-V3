@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/api/firestoreService';
 
 function isWithinSchedule(course) {
   if (!course.scheduleEnabled) return false;
@@ -39,19 +39,19 @@ export function useFloodNotifications(settings) {
     if (Notification.permission !== 'granted') return;
 
     // Bootstrap known sensor states so we don't spam on mount
-    base44.entities.Sensor.list().then(sensors => {
+    entities.Sensor.list().then(sensors => {
       sensors.forEach(s => { prevStatuses.current[s.id] = s.status; });
     });
 
     // Keep a live reference to courses for schedule checking
-    base44.entities.Course.list().then(courses => { coursesRef.current = courses; });
-    const courseUnsub = base44.entities.Course.subscribe((event) => {
+    entities.Course.list().then(courses => { coursesRef.current = courses; });
+    const courseUnsub = entities.Course.subscribe((event) => {
       if (event.type === 'create') coursesRef.current = [...coursesRef.current, event.data];
       else if (event.type === 'update') coursesRef.current = coursesRef.current.map(c => c.id === event.id ? event.data : c);
       else if (event.type === 'delete') coursesRef.current = coursesRef.current.filter(c => c.id !== event.id);
     });
 
-    const unsubscribe = base44.entities.Sensor.subscribe((event) => {
+    const unsubscribe = entities.Sensor.subscribe((event) => {
       if (event.type !== 'update' && event.type !== 'create') return;
 
       const sensor = event.data;

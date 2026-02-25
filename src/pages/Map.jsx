@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/api/firestoreService';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2, Navigation } from 'lucide-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -42,21 +42,21 @@ export default function MapPage() {
     }, () => {}, { timeout: 6000 });
   };
 
-  const { data: sensors = [], isLoading } = useQuery({
+  const { data: sensors = [], isLoading, isError } = useQuery({
     queryKey: ['sensors'],
-    queryFn: () => base44.entities.Sensor.list(),
+    queryFn: () => entities.Sensor.list(),
     refetchInterval: 30000,
   });
 
   const { data: watchedLocations = [], refetch: refetchLocations } = useQuery({
     queryKey: ['watchedLocations'],
-    queryFn: () => base44.entities.WatchedLocation.list(),
+    queryFn: () => entities.WatchedLocation.list(),
     refetchInterval: 60000,
   });
 
   // Live-sync watched location radius changes in real-time
   useEffect(() => {
-    const unsub = base44.entities.WatchedLocation.subscribe((event) => {
+    const unsub = entities.WatchedLocation.subscribe((event) => {
       if (event.type === 'update') {
         // Immediately update liveRadiusUpdates so circle redraws without waiting for refetch
         if (event.data?.alertRadiusMeters) {
@@ -70,15 +70,15 @@ export default function MapPage() {
 
   const { data: settingsList = [], isSuccess: settingsLoaded } = useQuery({
     queryKey: ['settings'],
-    queryFn: () => base44.entities.Settings.list(),
+    queryFn: () => entities.Settings.list(),
     refetchInterval: 10000,
   });
   const locationEnabled = settingsList[0]?.locationEnabled ?? true;
   const detectionRadius = settingsList[0]?.alertRadiusMeters ?? 300;
 
-  // Initialize map — wait until settings are loaded so we know if location is allowed
+  // Initialize map immediately
   useEffect(() => {
-    if (map.current || !mapContainer.current || !settingsLoaded) return;
+    if (map.current || !mapContainer.current) return;
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -103,7 +103,7 @@ export default function MapPage() {
       map.current?.remove();
       map.current = null;
     };
-  }, [settingsLoaded]);
+  }, []);
 
   // Center on user + show city name + user dot — only when locationEnabled
   useEffect(() => {
@@ -300,9 +300,19 @@ export default function MapPage() {
       `}</style>
 
       {isLoading && (
-        <div className="absolute inset-0 z-[2000] bg-[#0c1021] flex flex-col items-center justify-center gap-3">
-          <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
-          <p className="text-gray-400 text-sm">Loading flood sensors…</p>
+        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-[999] pointer-events-none">
+          <div className="flex items-center gap-2 bg-[#0c1021]/90 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
+            <Loader2 className="w-4 h-4 text-blue-400 animate-spin" />
+            <span className="text-gray-400 text-xs">Loading sensors…</span>
+          </div>
+        </div>
+      )}
+
+      {isError && (
+        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-[999] pointer-events-none">
+          <div className="flex items-center gap-2 bg-red-500/10 backdrop-blur-sm px-4 py-2 rounded-full border border-red-500/20">
+            <span className="text-red-400 text-xs">Could not load sensors</span>
+          </div>
         </div>
       )}
 
@@ -313,8 +323,8 @@ export default function MapPage() {
       {locationEnabled && (
         <button
           onClick={handleLocateMe}
-          className="absolute z-[1000] bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all"
-          style={{ bottom: '260px', right: '12px', width: '36px', height: '36px' }}
+          className="absolute z-[1000] bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all w-9 h-9 right-3"
+          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 220px)' }}
           title="Go to my location"
         >
           <Navigation className="w-4 h-4 text-blue-600" />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/api/firestoreService';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Navigation, Plus, Route } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -23,24 +23,24 @@ export default function RoutesPage() {
 
   const { data: courses = [], isLoading } = useQuery({
     queryKey: ['courses'],
-    queryFn: () => base44.entities.Course.list('-created_date'),
+    queryFn: () => entities.Course.list('-created_date'),
   });
 
   const { data: sensors = [] } = useQuery({
     queryKey: ['sensors'],
-    queryFn: () => base44.entities.Sensor.list(),
+    queryFn: () => entities.Sensor.list(),
     refetchInterval: 30000,
   });
 
   const { data: settingsList = [] } = useQuery({
     queryKey: ['settings'],
-    queryFn: () => base44.entities.Settings.list(),
+    queryFn: () => entities.Settings.list(),
   });
 
   const locationEnabled = settingsList[0]?.locationEnabled ?? true;
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Course.create(data),
+    mutationFn: (data) => entities.Course.create(data),
     onMutate: async (data) => {
       await queryClient.cancelQueries({ queryKey: ['courses'] });
       const prev = queryClient.getQueryData(['courses']);
@@ -52,7 +52,7 @@ export default function RoutesPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Course.update(id, data),
+    mutationFn: ({ id, data }) => entities.Course.update(id, data),
     onMutate: async ({ id, data }) => {
       await queryClient.cancelQueries({ queryKey: ['courses'] });
       const prev = queryClient.getQueryData(['courses']);
@@ -64,7 +64,7 @@ export default function RoutesPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Course.delete(id),
+    mutationFn: (id) => entities.Course.delete(id),
     onMutate: async (id) => {
       await queryClient.cancelQueries({ queryKey: ['courses'] });
       const prev = queryClient.getQueryData(['courses']);
@@ -111,7 +111,7 @@ export default function RoutesPage() {
 
       <div className="min-h-screen bg-[#0c1021] pb-24 flex flex-col lg:flex-row">
         {/* Map */}
-        <div className="h-[38vh] lg:h-screen lg:flex-1 lg:sticky lg:top-0">
+        <div className="h-[38vh] min-h-[200px] lg:h-screen lg:flex-1 lg:sticky lg:top-0">
           <RoutesMap
             selectedRoute={selectedRoute}
             sensors={sensors}

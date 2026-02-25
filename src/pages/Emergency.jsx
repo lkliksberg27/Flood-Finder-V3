@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/api/firestoreService';
 import { useQuery } from '@tanstack/react-query';
 import { AlertTriangle } from 'lucide-react';
 import BottomNav from '@/components/ui/BottomNav';
@@ -16,13 +16,13 @@ export default function EmergencyPage() {
 
   const { data: sensors = [] } = useQuery({
     queryKey: ['sensors'],
-    queryFn: () => base44.entities.Sensor.list(),
+    queryFn: () => entities.Sensor.list(),
     refetchInterval: 30000,
   });
 
   const { data: settingsList = [] } = useQuery({
     queryKey: ['settings'],
-    queryFn: () => base44.entities.Settings.list(),
+    queryFn: () => entities.Settings.list(),
   });
 
   const alertRadius = settingsList[0]?.alertRadiusMeters || 300;
@@ -59,7 +59,7 @@ export default function EmergencyPage() {
 
       <div className="min-h-screen bg-[#0c1021] pb-24 flex flex-col lg:flex-row">
         {/* Map */}
-        <div className="h-[38vh] lg:h-screen lg:flex-1 lg:sticky lg:top-0">
+        <div className="h-[38vh] min-h-[200px] lg:h-screen lg:flex-1 lg:sticky lg:top-0">
           <RoutesMap
             selectedRoute={selectedRoute}
             sensors={sensors}

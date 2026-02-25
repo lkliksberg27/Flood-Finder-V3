@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/api/firestoreService';
 import { useQuery } from '@tanstack/react-query';
 import PullToRefresh from '@/components/ui/PullToRefresh';
 import { Battery, BatteryLow, BatteryWarning, Droplets, Clock } from 'lucide-react';
@@ -46,7 +46,7 @@ export default function SensorsPage() {
 
   const { data: sensors = [], isLoading, refetch } = useQuery({
     queryKey: ['sensors'],
-    queryFn: () => base44.entities.Sensor.list(),
+    queryFn: () => entities.Sensor.list(),
     refetchInterval: 30000,
   });
 
