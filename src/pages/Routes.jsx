@@ -111,7 +111,7 @@ export default function RoutesPage() {
 
       <div className="min-h-screen bg-[#0c1021] pb-24 flex flex-col lg:flex-row">
         {/* Map */}
-        <div className="h-[38vh] min-h-[200px] lg:h-screen lg:flex-1 lg:sticky lg:top-0">
+        <div className="h-[28vh] min-h-[160px] lg:h-screen lg:flex-1 lg:sticky lg:top-0">
           <RoutesMap
             selectedRoute={selectedRoute}
             sensors={sensors}

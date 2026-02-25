@@ -6,7 +6,7 @@ export default function PageHeader({ title, subtitle, action, showBack = false, 
   const navigate = useNavigate();
   return (
     <div className="backdrop-blur-xl bg-[#0c1021]/95 border-b border-white/8 sticky top-0 z-10">
-      <div className="px-4 pt-12 pb-4 safe-area-top flex items-center justify-between gap-3">
+      <div className="px-4 pt-11 pb-3 safe-area-top flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 min-w-0">
           {showBack && (
             <button
@@ -17,8 +17,8 @@ export default function PageHeader({ title, subtitle, action, showBack = false, 
             </button>
           )}
           <div className="min-w-0">
-            <h1 className="text-xl font-bold text-white leading-tight">{title}</h1>
-            {subtitle && <p className="text-xs text-gray-500 mt-0.5 truncate">{subtitle}</p>}
+            <h1 className="text-lg font-bold text-white leading-tight">{title}</h1>
+            {subtitle && <p className="text-[11px] text-gray-500 mt-0.5 truncate">{subtitle}</p>}
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">

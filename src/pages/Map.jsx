@@ -325,7 +325,7 @@ export default function MapPage() {
       <style>{`
         .mapboxgl-popup-content { background:transparent!important;padding:0!important;box-shadow:none!important; }
         .mapboxgl-popup-tip { display:none!important; }
-        .mapboxgl-ctrl-bottom-right { bottom:calc(env(safe-area-inset-bottom, 0px) + 160px)!important; right:12px!important; }
+        .mapboxgl-ctrl-bottom-right { bottom:calc(env(safe-area-inset-bottom, 0px) + 120px)!important; right:12px!important; }
         .mapboxgl-ctrl-group { background:white!important;border:none!important;box-shadow:0 2px 8px rgba(0,0,0,0.15)!important; }
         .mapboxgl-ctrl-logo { display:none!important; }
         .mapboxgl-ctrl-attrib { display:none!important; }
@@ -363,7 +363,7 @@ export default function MapPage() {
         <button
           onClick={handleLocateMe}
           className="absolute z-[1000] bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all w-9 h-9 right-3"
-          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 220px)' }}
+          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 180px)' }}
           title="Go to my location"
         >
           <Navigation className="w-4 h-4 text-blue-600" />
@@ -371,8 +371,6 @@ export default function MapPage() {
       )}
 
       <MapLegend />
-      {/* Subtle bottom fade for nav bar */}
-      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#0c1021]/50 to-transparent pointer-events-none z-[99]" />
       <BottomNav />
     </div>
   );
