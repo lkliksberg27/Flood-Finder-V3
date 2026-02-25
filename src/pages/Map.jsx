@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { entities } from '@/api/firestoreService';
 import { useQuery } from '@tanstack/react-query';
-import { Loader2, Navigation } from 'lucide-react';
+import { Loader2, Navigation, Plus, Minus } from 'lucide-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import MapHeader from '@/components/map/MapHeader';
 import MapLegend from '@/components/map/MapLegend';
@@ -97,7 +97,6 @@ export default function MapPage() {
         maxTileCacheSize: 50,
       });
       map.current.touchZoomRotate.disableRotation();
-      map.current.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'bottom-right');
 
       map.current.on('load', () => {
         setMapReady(true);
@@ -325,8 +324,6 @@ export default function MapPage() {
       <style>{`
         .mapboxgl-popup-content { background:transparent!important;padding:0!important;box-shadow:none!important; }
         .mapboxgl-popup-tip { display:none!important; }
-        .mapboxgl-ctrl-bottom-right { bottom:calc(env(safe-area-inset-bottom, 0px) + 120px)!important; right:12px!important; }
-        .mapboxgl-ctrl-group { background:white!important;border:none!important;box-shadow:0 2px 8px rgba(0,0,0,0.15)!important; }
         .mapboxgl-ctrl-logo { display:none!important; }
         .mapboxgl-ctrl-attrib { display:none!important; }
       `}</style>
@@ -358,17 +355,37 @@ export default function MapPage() {
       <MapHeader sensors={sensors} cityName={cityName} />
       <div ref={mapContainer} className="absolute inset-0 w-full h-full" />
 
-      {/* Locate Me button — sits above the zoom controls */}
-      {locationEnabled && (
-        <button
-          onClick={handleLocateMe}
-          className="absolute z-[1000] bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all w-9 h-9 right-3"
-          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 180px)' }}
-          title="Go to my location"
-        >
-          <Navigation className="w-4 h-4 text-blue-600" />
-        </button>
-      )}
+      {/* Map controls column */}
+      <div
+        className="absolute right-3 z-[1000] flex flex-col gap-2"
+        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 76px)' }}
+      >
+        {locationEnabled && (
+          <button
+            onClick={handleLocateMe}
+            className="bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all w-9 h-9"
+            title="Go to my location"
+          >
+            <Navigation className="w-4 h-4 text-blue-600" />
+          </button>
+        )}
+        <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+          <button
+            onClick={() => map.current?.zoomIn()}
+            className="flex items-center justify-center w-9 h-9 hover:bg-gray-50 active:scale-95 transition-all border-b border-gray-200"
+            title="Zoom in"
+          >
+            <Plus className="w-4 h-4 text-gray-700" />
+          </button>
+          <button
+            onClick={() => map.current?.zoomOut()}
+            className="flex items-center justify-center w-9 h-9 hover:bg-gray-50 active:scale-95 transition-all"
+            title="Zoom out"
+          >
+            <Minus className="w-4 h-4 text-gray-700" />
+          </button>
+        </div>
+      </div>
 
       <MapLegend />
       <BottomNav />
