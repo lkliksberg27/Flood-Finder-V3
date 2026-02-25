@@ -1,5 +1,5 @@
 import React from 'react';
-import { Droplets } from 'lucide-react';
+import { Droplets, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -20,21 +20,30 @@ export default function MapHeader({ sensors = [], cityName }) {
                 <span className="text-xs text-gray-500 ml-1">· {cityName}</span>
               ) : null}
             </div>
-            {/* Status pill */}
-            {allClear ? (
-              <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 text-xs font-semibold">
-                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-                All Clear
-              </span>
-            ) : (
+            <div className="flex items-center gap-2">
+              {/* Status pill */}
+              {allClear ? (
+                <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 text-xs font-semibold">
+                  <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
+                  All Clear
+                </span>
+              ) : (
+                <Link
+                  to={createPageUrl('Alerts')}
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-semibold"
+                >
+                  <span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse" />
+                  {alertCount > 0 ? `${alertCount} Flooding` : `${warnCount} Warning`}
+                </Link>
+              )}
+              {/* Settings gear */}
               <Link
-                to={createPageUrl('Alerts')}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-semibold"
+                to="/Settings"
+                className="flex items-center justify-center w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all"
               >
-                <span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse" />
-                {alertCount > 0 ? `${alertCount} Flooding` : `${warnCount} Warning`}
+                <Settings className="w-4 h-4 text-gray-400" />
               </Link>
-            )}
+            </div>
           </div>
         </div>
       </div>

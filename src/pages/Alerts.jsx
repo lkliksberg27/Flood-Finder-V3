@@ -1,7 +1,8 @@
 import React from 'react';
 import { entities } from '@/api/firestoreService';
 import { useQuery } from '@tanstack/react-query';
-import { Bell, Loader2 } from 'lucide-react';
+import { Bell, Loader2, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import BottomNav from '@/components/ui/BottomNav';
 import AlertCard from '@/components/alerts/AlertCard';
 import AlertSummary from '@/components/alerts/AlertSummary';
@@ -38,14 +39,19 @@ export default function AlertsPage() {
       {/* Header */}
       <div className="backdrop-blur-xl bg-[#0c1021]/80 border-b border-white/10 sticky top-0 z-10">
         <div className="px-4 pt-12 pb-4 safe-area-top">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-red-500/20 rounded-xl">
-              <Bell className="w-6 h-6 text-red-400" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-red-500/20 rounded-xl">
+                <Bell className="w-6 h-6 text-red-400" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-white">Flood Alerts</h1>
+                <p className="text-sm text-gray-400">Active flooding warnings</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-white">Flood Alerts</h1>
-              <p className="text-sm text-gray-400">Active flooding warnings</p>
-            </div>
+            <Link to="/Settings" className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all">
+              <Settings className="w-4 h-4 text-gray-400" />
+            </Link>
           </div>
         </div>
       </div>

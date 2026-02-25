@@ -125,6 +125,7 @@ export default function RoutesPage() {
           <PageHeader
             title="Routes"
             subtitle={courses.length > 0 ? `${courses.length} saved location${courses.length > 1 ? 's' : ''}` : 'Save destinations for flood-aware routing'}
+            settingsLink
             action={
               <button
                 onClick={() => setShowAddForm(v => !v)}
