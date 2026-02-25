@@ -2,14 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Trash2, Bell, BellOff, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Slider } from '@/components/ui/slider';
-
-function getDistanceMeters(lat1, lng1, lat2, lng2) {
-  const R = 6371000;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
+import { getDistanceMeters } from '@/utils';
 
 const LEVELS = [
   { value: 'ANY',   label: 'Any',     emoji: '🔵', color: 'text-blue-400',  activeBg: 'bg-blue-500/20 border-blue-500/40' },
