@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Navigation, Pencil, Check, X, Clock, Trash2, Loader2, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { base44 } from '@/api/base44Client';
 
 import FloodDetailPanel from './FloodDetailPanel';
 import CourseSchedule from './CourseSchedule';

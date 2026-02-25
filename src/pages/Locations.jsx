@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/api/firestoreService';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Bell, MapPin } from 'lucide-react';
 
@@ -25,23 +25,23 @@ export default function LocationsPage() {
 
   const { data: settingsList = [] } = useQuery({
     queryKey: ['settings'],
-    queryFn: () => base44.entities.Settings.list(),
+    queryFn: () => entities.Settings.list(),
   });
   const useMetric = settingsList[0]?.useMetric ?? true;
 
   const { data: locations = [], isLoading } = useQuery({
     queryKey: ['watchedLocations'],
-    queryFn: () => base44.entities.WatchedLocation.list('-created_date'),
+    queryFn: () => entities.WatchedLocation.list('-created_date'),
   });
 
   const { data: sensors = [] } = useQuery({
     queryKey: ['sensors'],
-    queryFn: () => base44.entities.Sensor.list(),
+    queryFn: () => entities.Sensor.list(),
     refetchInterval: 30000,
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.WatchedLocation.create(data),
+    mutationFn: (data) => entities.WatchedLocation.create(data),
     onMutate: async (data) => {
       await queryClient.cancelQueries({ queryKey: ['watchedLocations'] });
       const prev = queryClient.getQueryData(['watchedLocations']);
@@ -53,7 +53,7 @@ export default function LocationsPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.WatchedLocation.delete(id),
+    mutationFn: (id) => entities.WatchedLocation.delete(id),
     onMutate: async (id) => {
       await queryClient.cancelQueries({ queryKey: ['watchedLocations'] });
       const prev = queryClient.getQueryData(['watchedLocations']);
@@ -65,7 +65,7 @@ export default function LocationsPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.WatchedLocation.update(id, data),
+    mutationFn: ({ id, data }) => entities.WatchedLocation.update(id, data),
     onMutate: async ({ id, data }) => {
       await queryClient.cancelQueries({ queryKey: ['watchedLocations'] });
       const prev = queryClient.getQueryData(['watchedLocations']);

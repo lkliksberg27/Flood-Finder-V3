@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/api/firestoreService';
 import { useFloodNotifications } from './components/notifications/useFloodNotifications';
 
 function NotificationManager() {
   const [settings, setSettings] = useState(null);
 
   useEffect(() => {
-    base44.entities.Settings.list().then(list => {
+    entities.Settings.list().then(list => {
       if (list[0]) setSettings(list[0]);
     });
-    const unsub = base44.entities.Settings.subscribe((event) => {
+    const unsub = entities.Settings.subscribe((event) => {
       if (event.type === 'update' || event.type === 'create') {
         setSettings(event.data);
       }

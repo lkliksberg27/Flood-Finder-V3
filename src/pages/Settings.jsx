@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/api/firestoreService';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Bell, Ruler, MapPin, BellRing, Droplets } from 'lucide-react';
 import AccountActions from '@/components/settings/AccountDeletion';
@@ -55,7 +55,7 @@ export default function SettingsPage() {
 
   const { data: settingsList = [], isLoading } = useQuery({
     queryKey: ['settings'],
-    queryFn: () => base44.entities.Settings.list(),
+    queryFn: () => entities.Settings.list(),
   });
 
   const serverSettings = settingsList[0] || DEFAULT_SETTINGS;
@@ -73,8 +73,8 @@ export default function SettingsPage() {
 
   const updateMutation = useMutation({
     mutationFn: async (data) => {
-      if (settingsList[0]?.id) return base44.entities.Settings.update(settingsList[0].id, data);
-      return base44.entities.Settings.create(data);
+      if (settingsList[0]?.id) return entities.Settings.update(settingsList[0].id, data);
+      return entities.Settings.create(data);
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['settings'] }),
   });

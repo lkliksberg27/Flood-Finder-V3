@@ -1,5 +1,5 @@
 import React from 'react';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/api/firestoreService';
 import { useQuery } from '@tanstack/react-query';
 import { Bell, Loader2 } from 'lucide-react';
 import BottomNav from '@/components/ui/BottomNav';
@@ -12,7 +12,7 @@ import { motion } from 'framer-motion';
 export default function AlertsPage() {
   const { data: sensors = [], isLoading, refetch } = useQuery({
     queryKey: ['sensors'],
-    queryFn: () => base44.entities.Sensor.list(),
+    queryFn: () => entities.Sensor.list(),
     refetchInterval: 30000,
   });
 
