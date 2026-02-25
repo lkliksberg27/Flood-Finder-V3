@@ -29,6 +29,7 @@ export default function MapPage() {
   const userDotRef = useRef(null);
   const [cityName, setCityName] = useState('');
   const [mapReady, setMapReady] = useState(false);
+  const [mapError, setMapError] = useState(null);
   const popupRef = useRef(null);
   const [liveRadiusUpdates, setLiveRadiusUpdates] = useState({});
   const userCoordsRef = useRef(null);
@@ -80,29 +81,37 @@ export default function MapPage() {
   useEffect(() => {
     if (map.current || !mapContainer.current) return;
 
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [-80.1223, 25.9651],
-      zoom: 13,
-      projection: 'mercator',
-      attributionControl: false,
-      logoPosition: 'bottom-left',
-      pitchWithRotate: false,
-      dragRotate: false,
-      touchPitch: false,
-      failIfMajorPerformanceCaveat: false,
-      maxTileCacheSize: 50,
-    });
-    map.current.touchZoomRotate.disableRotation();
-    map.current.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'bottom-right');
+    try {
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [-80.1223, 25.9651],
+        zoom: 13,
+        projection: 'mercator',
+        attributionControl: false,
+        logoPosition: 'bottom-left',
+        pitchWithRotate: false,
+        dragRotate: false,
+        touchPitch: false,
+        failIfMajorPerformanceCaveat: false,
+        maxTileCacheSize: 50,
+      });
+      map.current.touchZoomRotate.disableRotation();
+      map.current.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'bottom-right');
 
-    map.current.on('load', () => {
-      setMapReady(true);
-      // Ensure canvas sizes correctly after first paint and after splash screen dismisses
-      requestAnimationFrame(() => map.current?.resize());
-      setTimeout(() => map.current?.resize(), 2500);
-    });
+      map.current.on('load', () => {
+        setMapReady(true);
+        requestAnimationFrame(() => map.current?.resize());
+      });
+
+      map.current.on('error', (e) => {
+        console.error('Mapbox error:', e);
+        setMapError(e.error?.message || 'Map failed to load');
+      });
+    } catch (e) {
+      console.error('Map init failed:', e);
+      setMapError(e.message);
+    }
 
     return () => {
       map.current?.remove();
@@ -312,7 +321,7 @@ export default function MapPage() {
   }, [mapReady, sensors, watchedLocations, liveRadiusUpdates]);
 
   return (
-    <div className="relative w-full h-[100dvh] overflow-hidden bg-[#0c1021]" style={{ height: '100dvh' }}>
+    <div className="relative w-full h-screen overflow-hidden bg-[#0c1021]">
       <style>{`
         .mapboxgl-popup-content { background:transparent!important;padding:0!important;box-shadow:none!important; }
         .mapboxgl-popup-tip { display:none!important; }
@@ -336,6 +345,13 @@ export default function MapPage() {
           <div className="flex items-center gap-2 bg-red-500/10 backdrop-blur-sm px-4 py-2 rounded-full border border-red-500/20">
             <span className="text-red-400 text-xs">Could not load sensors</span>
           </div>
+        </div>
+      )}
+
+      {mapError && (
+        <div className="absolute top-20 left-4 right-4 z-[9999] bg-red-900/90 border border-red-500 rounded-xl p-4">
+          <p className="text-red-300 text-xs font-bold mb-1">Map Error:</p>
+          <p className="text-yellow-300 text-xs font-mono break-all">{mapError}</p>
         </div>
       )}
 
