@@ -84,8 +84,11 @@ export default function RoutesMap({ selectedRoute, sensors, course, locationEnab
           if (map.current?.isStyleLoaded()) addUserMarker();
           else map.current?.once('load', addUserMarker);
         },
-        () => initMap([-80.1392, 25.9565]),
-        { timeout: 6000 }
+        (err) => {
+          console.warn('RoutesMap geolocation failed:', err?.message);
+          initMap([-80.1392, 25.9565]);
+        },
+        { timeout: 6000, maximumAge: 0 }
       );
     } else {
       initMap([-80.1392, 25.9565]);
