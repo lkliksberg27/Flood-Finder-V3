@@ -97,8 +97,9 @@ export default function MapPage() {
 
     map.current.on('load', () => {
       setMapReady(true);
-      // Ensure canvas sizes correctly after first paint (fixes mobile blank map)
+      // Ensure canvas sizes correctly after first paint and after splash screen dismisses
       requestAnimationFrame(() => map.current?.resize());
+      setTimeout(() => map.current?.resize(), 2500);
     });
 
     return () => {
