@@ -42,7 +42,7 @@ export default function AlertCard({ sensor, index }) {
             <span className="text-gray-400 text-xs">cm</span>
           </div>
           <p className="text-[10px] text-gray-500 mt-0.5">
-            {formatDistanceToNow(new Date(sensor.lastSeen), { addSuffix: true })}
+            {sensor.lastSeen ? formatDistanceToNow(new Date(sensor.lastSeen), { addSuffix: true }) : 'Unknown'}
           </p>
         </div>
       </div>

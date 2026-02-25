@@ -3,7 +3,7 @@ import { Droplets } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
-export default function MapHeader({ sensors, cityName }) {
+export default function MapHeader({ sensors = [], cityName }) {
   const warnCount = sensors.filter(s => s.status === 'WARN').length;
   const alertCount = sensors.filter(s => s.status === 'ALERT').length;
   const allClear = warnCount === 0 && alertCount === 0;

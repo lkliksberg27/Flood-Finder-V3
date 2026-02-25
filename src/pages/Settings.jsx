@@ -2,13 +2,11 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { entities } from '@/api/firestoreService';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Bell, Ruler, MapPin, BellRing, Droplets } from 'lucide-react';
-import AccountActions from '@/components/settings/AccountDeletion';
 import { Button } from '@/components/ui/button';
 import BottomNav from '@/components/ui/BottomNav';
 import PageHeader from '@/components/ui/PageHeader';
 import LoadingScreen from '@/components/ui/LoadingScreen';
 import FloodSwitch from '@/components/ui/FloodSwitch';
-import { motion } from 'framer-motion';
 
 function SettingRow({ icon: Icon, iconBg, iconBgOff, iconColor, iconColorOff, title, description, control, isOn }) {
   const bg = isOn === undefined ? iconBg : (isOn ? iconBg : (iconBgOff || 'bg-white/5'));
