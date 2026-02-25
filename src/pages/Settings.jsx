@@ -46,9 +46,10 @@ const DEFAULT_SETTINGS = {
 
 export default function SettingsPage() {
   const queryClient = useQueryClient();
-  const [notifPermission, setNotifPermission] = useState(
-    typeof Notification !== 'undefined' ? Notification.permission : 'unsupported'
-  );
+  const [notifPermission, setNotifPermission] = useState(() => {
+    try { return window.Notification ? window.Notification.permission : 'unsupported'; }
+    catch { return 'unsupported'; }
+  });
 
   const { data: settingsList = [], isLoading } = useQuery({
     queryKey: ['settings'],
@@ -95,8 +96,10 @@ export default function SettingsPage() {
   };
 
   const requestPermission = async () => {
-    const result = await Notification.requestPermission();
-    setNotifPermission(result);
+    try {
+      const result = await window.Notification.requestPermission();
+      setNotifPermission(result);
+    } catch {}
   };
 
   if (isLoading) return <LoadingScreen message="Loading settings…" />;
