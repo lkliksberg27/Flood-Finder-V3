@@ -99,6 +99,7 @@ export default function LocationsPage() {
       <PageHeader
         title="Watched Places"
         subtitle={subtitle}
+        settingsLink
         action={
           <button
             onClick={() => setShowAdd(v => !v)}

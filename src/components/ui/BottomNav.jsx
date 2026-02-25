@@ -1,17 +1,16 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Map, Navigation, AlertTriangle, MapPin, Settings, Cpu } from 'lucide-react';
+import { Map, Navigation, AlertTriangle, MapPin, Cpu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
 const tabs = [
-  { name: 'Map',      page: 'Map',       icon: Map,           label: 'Map',      bg: 'bg-sky-500'     },
-  { name: 'Routes',   page: 'Routes',    icon: Navigation,    label: 'Routes',   bg: 'bg-violet-500'  },
-  { name: 'SOS',      page: 'Emergency', icon: AlertTriangle, label: 'SOS',      bg: 'bg-red-500'     },
-  { name: 'Places',   page: 'Locations', icon: MapPin,        label: 'Places',   bg: 'bg-emerald-500' },
-  { name: 'Sensors',  page: 'Sensors',   icon: Cpu,           label: 'Sensors',  bg: 'bg-blue-500'    },
-  { name: 'Settings', page: 'Settings',  icon: Settings,      label: 'Settings', bg: 'bg-amber-500'   },
+  { name: 'Map',     page: 'Map',       icon: Map,           label: 'Map',     color: 'bg-sky-500',     activeText: 'text-sky-400'     },
+  { name: 'Routes',  page: 'Routes',    icon: Navigation,    label: 'Routes',  color: 'bg-violet-500',  activeText: 'text-violet-400'  },
+  { name: 'SOS',     page: 'Emergency', icon: AlertTriangle, label: 'SOS',     color: 'bg-red-500',     activeText: 'text-red-400'     },
+  { name: 'Places',  page: 'Locations', icon: MapPin,        label: 'Places',  color: 'bg-emerald-500', activeText: 'text-emerald-400' },
+  { name: 'Sensors', page: 'Sensors',   icon: Cpu,           label: 'Sensors', color: 'bg-blue-500',    activeText: 'text-blue-400'    },
 ];
 
 export default function BottomNav() {
@@ -21,33 +20,43 @@ export default function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50">
       <div className="backdrop-blur-2xl bg-[#0b0f1e]/95 border-t border-white/[0.06]" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
-        <div className="flex justify-around items-end h-[72px] pb-2 max-w-lg mx-auto px-1">
+        <div className="flex justify-around items-end h-[76px] pb-2 max-w-lg mx-auto px-2">
           {tabs.map((tab) => {
             const isActive = currentPage.toLowerCase() === tab.page.toLowerCase();
+            const isSOS = tab.name === 'SOS';
             const Icon = tab.icon;
 
             return (
               <Link
                 key={tab.name}
                 to={createPageUrl(tab.page)}
-                className="flex flex-col items-center justify-end gap-0.5 pb-1 px-1 min-w-[44px] min-h-[44px]"
+                className="relative flex flex-col items-center justify-end gap-1 pb-1 min-w-[52px] min-h-[44px]"
               >
+                {/* Sliding indicator bar */}
+                {isActive && (
+                  <motion.div
+                    layoutId="navIndicator"
+                    className={cn('absolute -top-0.5 w-8 h-1 rounded-full', tab.color)}
+                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                  />
+                )}
+
                 <motion.div
-                  whileTap={{ scale: 0.82 }}
+                  whileTap={{ scale: 0.85 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 20 }}
                   className={cn(
                     'w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300',
-                    isActive ? tab.bg : 'bg-transparent'
+                    isActive ? tab.color : (isSOS ? 'bg-red-500/10' : 'bg-transparent')
                   )}
                 >
                   <Icon className={cn(
                     'w-5 h-5 transition-all duration-300',
-                    isActive ? 'text-white' : 'text-gray-600'
+                    isActive ? 'text-white' : (isSOS ? 'text-red-400/60' : 'text-gray-500')
                   )} />
                 </motion.div>
                 <span className={cn(
                   'text-[10px] font-medium transition-colors duration-200',
-                  isActive ? 'text-white' : 'text-gray-600'
+                  isActive ? tab.activeText : (isSOS ? 'text-red-400/60' : 'text-gray-500')
                 )}>
                   {tab.label}
                 </span>

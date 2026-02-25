@@ -66,6 +66,7 @@ export default function SensorsPage() {
       <PageHeader
         title="Sensors"
         subtitle={`${sensors.length} devices${lowBattery > 0 ? ` · ${lowBattery} low battery` : ''}`}
+        settingsLink
       />
 
       {/* Filter tabs */}

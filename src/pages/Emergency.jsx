@@ -74,6 +74,7 @@ export default function EmergencyPage() {
           <PageHeader
             title="Emergency SOS"
             subtitle="Navigate to the nearest help"
+            settingsLink
           />
           <div className="flex-1 px-4 py-4 space-y-3">
             <EmergencyRoutes

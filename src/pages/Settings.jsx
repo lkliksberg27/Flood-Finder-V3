@@ -3,7 +3,6 @@ import { entities } from '@/api/firestoreService';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Bell, Ruler, MapPin, BellRing, Droplets } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import BottomNav from '@/components/ui/BottomNav';
 import PageHeader from '@/components/ui/PageHeader';
 import LoadingScreen from '@/components/ui/LoadingScreen';
 import FloodSwitch from '@/components/ui/FloodSwitch';
@@ -103,8 +102,8 @@ export default function SettingsPage() {
   if (isLoading) return <LoadingScreen message="Loading settings…" />;
 
   return (
-    <div className="min-h-screen bg-[#0c1021] pb-28">
-      <PageHeader title="Settings" subtitle="Customize how Flood Finder works" />
+    <div className="min-h-screen bg-[#0c1021] pb-12">
+      <PageHeader title="Settings" subtitle="Customize how Flood Finder works" showBack={true} />
 
       <div className="px-4 py-5 space-y-6 max-w-lg mx-auto">
 
@@ -197,14 +196,13 @@ export default function SettingsPage() {
             iconBg="bg-blue-500/20"
             iconColor="text-blue-400"
             title="Flood Finder"
-            description="Real-time flood detection · v2.0 (Firebase)"
+            description="Real-time flood detection · v3.1"
             control={null}
           />
         </Section>
 
       </div>
 
-      <BottomNav />
     </div>
   );
 }

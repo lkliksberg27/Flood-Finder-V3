@@ -1,12 +1,8 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { ChevronLeft, Settings } from 'lucide-react';
 
-/**
- * Shared page header — consistent across all non-map pages.
- * Props: title, subtitle, action (optional React node), showBack (bool)
- */
-export default function PageHeader({ title, subtitle, action, showBack = false }) {
+export default function PageHeader({ title, subtitle, action, showBack = false, settingsLink = false }) {
   const navigate = useNavigate();
   return (
     <div className="backdrop-blur-xl bg-[#0c1021]/95 border-b border-white/8 sticky top-0 z-10">
@@ -25,7 +21,17 @@ export default function PageHeader({ title, subtitle, action, showBack = false }
             {subtitle && <p className="text-xs text-gray-500 mt-0.5 truncate">{subtitle}</p>}
           </div>
         </div>
-        {action && <div className="flex-shrink-0">{action}</div>}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {action && <div>{action}</div>}
+          {settingsLink && (
+            <Link
+              to="/Settings"
+              className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all"
+            >
+              <Settings className="w-4 h-4 text-gray-400" />
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   );
