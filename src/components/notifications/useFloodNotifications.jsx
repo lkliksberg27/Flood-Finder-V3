@@ -36,7 +36,7 @@ export function useFloodNotifications(settings) {
 
   useEffect(() => {
     if (!settings?.notificationsEnabled) return;
-    if (Notification.permission !== 'granted') return;
+    if (!window.Notification || window.Notification.permission !== 'granted') return;
 
     // Bootstrap known sensor states so we don't spam on mount
     entities.Sensor.list().then(sensors => {
@@ -83,7 +83,7 @@ export function useFloodNotifications(settings) {
         ? `Water level: ${sensor.waterLevelCm}cm — Avoid this area`
         : `Water level: ${sensor.waterLevelCm}cm — Exercise caution`;
 
-      new Notification(title, {
+      new window.Notification(title, {
         body,
         icon: '/favicon.ico',
         badge: '/favicon.ico',
