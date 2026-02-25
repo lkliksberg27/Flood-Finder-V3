@@ -109,7 +109,7 @@ export default function AddCourseForm({ onClose, onSave }) {
     >
       <div className="flex items-center justify-between">
         <h3 className="text-white font-semibold text-base">Add Location</h3>
-        <button onClick={onClose} className="p-1 hover:bg-white/5 rounded">
+        <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center">
           <X className="w-5 h-5 text-gray-400" />
         </button>
       </div>
@@ -146,7 +146,7 @@ export default function AddCourseForm({ onClose, onSave }) {
               <button
                 key={i}
                 onMouseDown={(e) => { e.preventDefault(); selectAddress(s); }}
-                className="w-full px-3 py-2 text-left hover:bg-white/5 border-b border-white/5 last:border-0 flex items-start gap-2.5"
+                className="w-full px-3 py-3 text-left hover:bg-white/5 border-b border-white/5 last:border-0 flex items-start gap-2.5 min-h-[44px]"
               >
                 <MapPin className="w-3.5 h-3.5 text-gray-500 mt-0.5 flex-shrink-0" />
                 <div className="min-w-0">
@@ -220,7 +220,7 @@ export default function AddCourseForm({ onClose, onSave }) {
                   <button
                     key={day}
                     onClick={() => toggleDay(day)}
-                    className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    className={`flex-1 min-h-[44px] py-2 rounded-lg text-xs font-semibold transition-all ${
                       scheduleDays.includes(day)
                         ? 'bg-blue-500/25 text-blue-300 border border-blue-500/40'
                         : 'bg-white/5 text-gray-500 border border-white/5'
@@ -240,14 +240,14 @@ export default function AddCourseForm({ onClose, onSave }) {
                     type="time"
                     value={win.startTime}
                     onChange={(e) => setTimeWindows(prev => prev.map((w, i) => i === idx ? { ...w, startTime: e.target.value } : w))}
-                    className="flex-1 bg-[#0c1021] text-white px-2 py-1.5 rounded-lg text-xs border border-white/10 focus:border-blue-500/60 focus:outline-none"
+                    className="flex-1 bg-[#0c1021] text-white px-3 py-2 rounded-lg text-base border border-white/10 focus:border-blue-500/60 focus:outline-none"
                   />
-                  <span className="text-gray-600 text-xs">→</span>
+                  <span className="text-gray-600 text-sm">→</span>
                   <input
                     type="time"
                     value={win.endTime}
                     onChange={(e) => setTimeWindows(prev => prev.map((w, i) => i === idx ? { ...w, endTime: e.target.value } : w))}
-                    className="flex-1 bg-[#0c1021] text-white px-2 py-1.5 rounded-lg text-xs border border-white/10 focus:border-blue-500/60 focus:outline-none"
+                    className="flex-1 bg-[#0c1021] text-white px-3 py-2 rounded-lg text-base border border-white/10 focus:border-blue-500/60 focus:outline-none"
                   />
                   {timeWindows.length > 1 && (
                     <button

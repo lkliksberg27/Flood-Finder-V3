@@ -99,7 +99,7 @@ export default function CourseSchedule({ course, onUpdate }) {
                     key={day}
                     onClick={(e) => { e.stopPropagation(); toggleDay(day); }}
                     className={cn(
-                      "flex-1 py-2 rounded-xl text-xs font-semibold transition-all duration-150 active:scale-95",
+                      "flex-1 min-h-[44px] py-2 rounded-xl text-xs font-semibold transition-all duration-150 active:scale-95",
                       days.includes(day)
                         ? "bg-blue-500/25 text-blue-300 border border-blue-500/40"
                         : "bg-white/5 text-gray-500 border border-white/5 hover:border-white/15"
@@ -144,7 +144,7 @@ export default function CourseSchedule({ course, onUpdate }) {
                           value={win.startTime}
                           onChange={(e) => { e.stopPropagation(); updateWindow(idx, 'startTime', e.target.value); }}
                           onClick={(e) => e.stopPropagation()}
-                          className="flex-1 bg-[#151a2e] text-white px-3 py-2 rounded-xl text-sm border border-white/10 focus:border-blue-500/60 focus:outline-none"
+                          className="flex-1 bg-[#151a2e] text-white px-3 py-2 rounded-xl text-base border border-white/10 focus:border-blue-500/60 focus:outline-none"
                         />
                         <span className="text-gray-600 text-sm">→</span>
                         <input
@@ -152,12 +152,12 @@ export default function CourseSchedule({ course, onUpdate }) {
                           value={win.endTime}
                           onChange={(e) => { e.stopPropagation(); updateWindow(idx, 'endTime', e.target.value); }}
                           onClick={(e) => e.stopPropagation()}
-                          className="flex-1 bg-[#151a2e] text-white px-3 py-2 rounded-xl text-sm border border-white/10 focus:border-blue-500/60 focus:outline-none"
+                          className="flex-1 bg-[#151a2e] text-white px-3 py-2 rounded-xl text-base border border-white/10 focus:border-blue-500/60 focus:outline-none"
                         />
                         {timeWindows.length > 1 && (
                           <button
                             onClick={(e) => { e.stopPropagation(); removeWindow(idx); }}
-                            className="p-1.5 text-red-400 hover:bg-red-500/10 rounded-lg flex-shrink-0"
+                            className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center"
                           >
                             <X className="w-3.5 h-3.5" />
                           </button>

@@ -67,8 +67,8 @@ export default function AlertsPage() {
                 <p className="text-sm text-gray-400">Active flooding warnings</p>
               </div>
             </div>
-            <Link to="/Settings" className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all">
-              <Settings className="w-4 h-4 text-gray-400" />
+            <Link to="/Settings" className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all">
+              <Settings className="w-[18px] h-[18px] text-gray-400" />
             </Link>
           </div>
         </div>
