@@ -54,7 +54,7 @@ export default function LocationCard({ location, sensors, useMetric = true, onDe
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`rounded-xl border overflow-hidden ${statusBorder} transition-colors`}
+      className={`rounded-2xl border overflow-hidden ${statusBorder} transition-colors`}
     >
       {/* Header */}
       <div className="p-3 pb-2">
@@ -62,13 +62,13 @@ export default function LocationCard({ location, sensors, useMetric = true, onDe
           <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${dotColor} ${isTriggered ? 'animate-pulse' : ''}`} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-white font-semibold text-sm truncate">{location.name}</span>
+              <span className="text-white font-semibold text-sm truncate" title={location.name}>{location.name}</span>
               {isTriggered
                 ? <Bell className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
                 : <BellOff className="w-3.5 h-3.5 text-gray-600 flex-shrink-0" />
               }
             </div>
-            <p className="text-xs text-gray-500 truncate mt-0.5">{location.address}</p>
+            <p className="text-xs text-gray-500 truncate mt-0.5" title={location.address}>{location.address}</p>
           </div>
         </div>
 

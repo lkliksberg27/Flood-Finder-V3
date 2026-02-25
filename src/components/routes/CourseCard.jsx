@@ -95,7 +95,7 @@ export default function CourseCard({
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-[#151a2e] hover:bg-[#1a1f35] rounded-xl border border-white/5 hover:border-white/10 overflow-hidden transition-colors cursor-pointer"
+      className="bg-[#151a2e] hover:bg-[#1a1f35] rounded-2xl border border-white/5 hover:border-white/10 overflow-hidden transition-colors cursor-pointer"
       onClick={() => !isEditing && onToggle(course.id)}
     >
       {/* Header */}
@@ -119,13 +119,13 @@ export default function CourseCard({
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <h3 className="text-white font-semibold text-sm truncate">{course.name}</h3>
+                <h3 className="text-white font-semibold text-sm truncate" title={course.name}>{course.name}</h3>
                 <button onClick={e => { e.stopPropagation(); setIsEditing(true); }} className="p-1 text-gray-500 hover:text-gray-300 hover:bg-white/5 rounded flex-shrink-0">
                   <Pencil className="w-3 h-3" />
                 </button>
               </div>
             )}
-            <p className="text-xs text-gray-500 truncate mt-0.5">{course.endAddress}</p>
+            <p className="text-xs text-gray-500 truncate mt-0.5" title={course.endAddress}>{course.endAddress}</p>
           </div>
           <div className="flex-shrink-0">
             {isExpanded ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
@@ -151,7 +151,7 @@ export default function CourseCard({
                   <button
                     onClick={(e) => { e.stopPropagation(); handleGenerateRoutes(); }}
                     disabled={generatingRoutes}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl btn-primary text-white text-sm font-bold transition-all active:scale-95 shadow-lg shadow-blue-500/20 disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl btn-primary text-white text-sm font-bold transition-all active:scale-95 shadow-lg shadow-blue-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {generatingRoutes ? <><Loader2 className="w-4 h-4 animate-spin" />Loading...</> : <><Navigation className="w-4 h-4" />Get Routes</>}
                   </button>
@@ -187,7 +187,7 @@ export default function CourseCard({
                     <button
                       onClick={(e) => { e.stopPropagation(); handleGenerateRoutes(); }}
                       disabled={generatingRoutes}
-                      className="flex-1 px-2 py-1.5 text-xs text-gray-400 hover:text-gray-300 hover:bg-white/5 rounded-lg transition-colors"
+                      className="flex-1 px-2 py-1.5 text-xs text-gray-400 hover:text-gray-300 hover:bg-white/5 rounded-lg transition-all active:scale-95"
                     >
                       {generatingRoutes ? 'Refreshing...' : 'Refresh'}
                     </button>

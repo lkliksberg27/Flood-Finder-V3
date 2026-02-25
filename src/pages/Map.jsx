@@ -336,7 +336,7 @@ export default function MapPage() {
       `}</style>
 
       {isLoading && (
-        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-[999] pointer-events-none">
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-[999] pointer-events-none">
           <div className="flex items-center gap-2 bg-[#0c1021]/90 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
             <Loader2 className="w-4 h-4 text-blue-400 animate-spin" />
             <span className="text-gray-400 text-xs">Loading sensors…</span>
@@ -345,7 +345,7 @@ export default function MapPage() {
       )}
 
       {isError && (
-        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-[999] pointer-events-none">
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-[999] pointer-events-none">
           <div className="flex items-center gap-2 bg-red-500/10 backdrop-blur-sm px-4 py-2 rounded-full border border-red-500/20">
             <span className="text-red-400 text-xs">Could not load sensors</span>
           </div>
@@ -353,7 +353,7 @@ export default function MapPage() {
       )}
 
       {mapError && (
-        <div className="absolute top-20 left-4 right-4 z-[9999] bg-red-900/90 border border-red-500 rounded-xl p-4">
+        <div className="absolute top-20 left-4 right-4 z-[9999] bg-red-900/90 border border-red-500 rounded-2xl p-4">
           <p className="text-red-300 text-xs font-bold mb-1">Map Error:</p>
           <p className="text-yellow-300 text-xs font-mono break-all">{mapError}</p>
         </div>
