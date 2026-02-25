@@ -42,13 +42,14 @@ export default function RoutesPage() {
   const createMutation = useMutation({
     mutationFn: (data) => entities.Course.create(data),
     onMutate: async (data) => {
+      const tempId = `temp-${Date.now()}`;
       await queryClient.cancelQueries({ queryKey: ['courses'] });
       const prev = queryClient.getQueryData(['courses']);
-      queryClient.setQueryData(['courses'], old => [{ ...data, id: '__optimistic__' }, ...(old || [])]);
-      return { prev };
+      queryClient.setQueryData(['courses'], old => [{ ...data, id: tempId }, ...(old || [])]);
+      return { prev, tempId };
     },
     onError: (_, __, ctx) => queryClient.setQueryData(['courses'], ctx.prev),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['courses'] }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['courses'] }),
   });
 
   const updateMutation = useMutation({

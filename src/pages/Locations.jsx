@@ -36,13 +36,14 @@ export default function LocationsPage() {
   const createMutation = useMutation({
     mutationFn: (data) => entities.WatchedLocation.create(data),
     onMutate: async (data) => {
+      const tempId = `temp-${Date.now()}`;
       await queryClient.cancelQueries({ queryKey: ['watchedLocations'] });
       const prev = queryClient.getQueryData(['watchedLocations']);
-      queryClient.setQueryData(['watchedLocations'], old => [{ ...data, id: '__optimistic__' }, ...(old || [])]);
-      return { prev };
+      queryClient.setQueryData(['watchedLocations'], old => [{ ...data, id: tempId }, ...(old || [])]);
+      return { prev, tempId };
     },
     onError: (_, __, ctx) => queryClient.setQueryData(['watchedLocations'], ctx.prev),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['watchedLocations'] }); setShowAdd(false); },
+    onSettled: () => { queryClient.invalidateQueries({ queryKey: ['watchedLocations'] }); setShowAdd(false); },
   });
 
   const deleteMutation = useMutation({

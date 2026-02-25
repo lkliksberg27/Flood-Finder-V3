@@ -40,7 +40,9 @@ export default function MapPage() {
       if (!map.current) return;
       const { longitude, latitude } = pos.coords;
       map.current.flyTo({ center: [longitude, latitude], zoom: 16, duration: 1000 });
-    }, () => {}, { timeout: 6000 });
+    }, (err) => {
+      console.warn('Locate me failed:', err?.message);
+    }, { timeout: 6000 });
   };
 
   const { data: sensors = [], isLoading, isError } = useQuery({
@@ -136,6 +138,7 @@ export default function MapPage() {
     navigator.geolocation.getCurrentPosition((pos) => {
       if (!map.current) return;
       const { longitude, latitude } = pos.coords;
+      userCoordsRef.current = { lat: latitude, lng: longitude };
 
       map.current.flyTo({ center: [longitude, latitude], zoom: 14, duration: 1200 });
 
@@ -146,7 +149,9 @@ export default function MapPage() {
           const place = data.features?.find(f => f.place_type.includes('place'));
           setCityName(place?.text || '');
         })
-        .catch(() => {});
+        .catch((err) => {
+          console.error('Reverse geocode failed:', err);
+        });
 
       // User dot — remove old one first then recreate
       userDotRef.current?.remove();
@@ -155,7 +160,9 @@ export default function MapPage() {
       userDotRef.current = new mapboxgl.Marker({ element: el })
         .setLngLat([longitude, latitude])
         .addTo(map.current);
-    }, () => {}, { timeout: 6000 });
+    }, (err) => {
+      console.warn('Geolocation denied or failed:', err?.message);
+    }, { timeout: 6000 });
   }, [locationEnabled, mapReady]);
 
   const makeCircleCoords = (lat, lng, radiusM) => {
@@ -314,8 +321,8 @@ export default function MapPage() {
       });
     };
 
-    if (map.current.isStyleLoaded()) drawAll();
-    else map.current.once('style.load', drawAll);
+    if (map.current && map.current.isStyleLoaded()) drawAll();
+    else if (map.current) map.current.once('style.load', drawAll);
 
   }, [mapReady, sensors, watchedLocations, liveRadiusUpdates]);
 

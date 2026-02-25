@@ -38,10 +38,12 @@ export function useFloodNotifications(settings) {
     if (!settings?.notificationsEnabled) return;
     if (!window.Notification || window.Notification.permission !== 'granted') return;
 
-    // Bootstrap known sensor states so we don't spam on mount
-    entities.Sensor.list().then(sensors => {
-      sensors.forEach(s => { prevStatuses.current[s.id] = s.status; });
-    });
+    // Bootstrap known sensor states so we don't spam on mount (only on first run)
+    if (Object.keys(prevStatuses.current).length === 0) {
+      entities.Sensor.list().then(sensors => {
+        sensors.forEach(s => { prevStatuses.current[s.id] = s.status; });
+      });
+    }
 
     // Keep a live reference to courses for schedule checking
     entities.Course.list().then(courses => { coursesRef.current = courses; });
