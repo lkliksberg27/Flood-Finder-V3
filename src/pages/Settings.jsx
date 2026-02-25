@@ -197,7 +197,7 @@ export default function SettingsPage() {
             iconBg="bg-blue-500/20"
             iconColor="text-blue-400"
             title="Flood Finder"
-            description="Real-time flood detection · v1.0"
+            description="Real-time flood detection · v2.0 (Firebase)"
             control={null}
           />
         </Section>
