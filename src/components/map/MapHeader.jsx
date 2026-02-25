@@ -46,9 +46,9 @@ export default function MapHeader({ sensors = [], cityName }) {
               {/* Settings gear */}
               <Link
                 to="/Settings"
-                className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/10 hover:bg-white/15 active:scale-95 transition-all backdrop-blur-sm"
+                className="flex items-center justify-center w-8 h-8 rounded-xl bg-white/10 hover:bg-white/15 active:scale-95 transition-all backdrop-blur-sm"
               >
-                <Settings className="w-[18px] h-[18px] text-gray-300" />
+                <Settings className="w-4 h-4 text-gray-300" />
               </Link>
             </div>
           </div>

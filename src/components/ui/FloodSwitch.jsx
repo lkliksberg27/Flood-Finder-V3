@@ -10,7 +10,6 @@ export default function FloodSwitch({ checked, onCheckedChange, color = '#3b82f6
       onClick={() => onCheckedChange(!checked)}
       className={cn(
         'relative w-[52px] h-[30px] rounded-full flex-shrink-0 transition-colors duration-300 focus:outline-none',
-        'min-h-[44px] flex items-center',
         checked ? 'shadow-lg' : ''
       )}
       style={{
