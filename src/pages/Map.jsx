@@ -91,6 +91,8 @@ export default function MapPage() {
       pitchWithRotate: false,
       dragRotate: false,
       touchPitch: false,
+      failIfMajorPerformanceCaveat: false,
+      maxTileCacheSize: 50,
     });
     map.current.touchZoomRotate.disableRotation();
     map.current.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'bottom-right');
@@ -149,7 +151,7 @@ export default function MapPage() {
   }, [locationEnabled, mapReady]);
 
   const makeCircleCoords = (lat, lng, radiusM) => {
-    const points = 64;
+    const points = 32;
     const earthR = 6371000;
     const d = radiusM / earthR;
     const latR = lat * Math.PI / 180;
@@ -176,24 +178,24 @@ export default function MapPage() {
       locationMarkersRef.current.forEach(mk => mk.remove());
       locationMarkersRef.current = [];
 
-      // ── Remove old location circle layers ──
-      for (let i = 0; i < 100; i++) {
-        const fillId = `wl-fill-${i}`;
-        const strokeId = `wl-stroke-${i}`;
-        const srcId = `wl-src-${i}`;
-        if (m.getLayer(strokeId)) m.removeLayer(strokeId);
-        if (m.getLayer(fillId)) m.removeLayer(fillId);
-        if (m.getSource(srcId)) m.removeSource(srcId);
+      // ── Remove old location circle layers (only up to actual count) ──
+      const prevWlCount = locationMarkersRef.current.length || watchedLocations.length;
+      for (let i = 0; i < prevWlCount + 5; i++) {
+        try {
+          if (m.getLayer(`wl-stroke-${i}`)) m.removeLayer(`wl-stroke-${i}`);
+          if (m.getLayer(`wl-fill-${i}`)) m.removeLayer(`wl-fill-${i}`);
+          if (m.getSource(`wl-src-${i}`)) m.removeSource(`wl-src-${i}`);
+        } catch {}
       }
 
-      // ── Remove old sensor layers ──
-      for (let i = 0; i < 100; i++) {
-        const fillId = `sc-fill-${i}`;
-        const strokeId = `sc-stroke-${i}`;
-        const srcId = `sc-src-${i}`;
-        if (m.getLayer(strokeId)) m.removeLayer(strokeId);
-        if (m.getLayer(fillId)) m.removeLayer(fillId);
-        if (m.getSource(srcId)) m.removeSource(srcId);
+      // ── Remove old sensor layers (only up to actual count) ──
+      const prevScCount = markersRef.current.length || sensors.length;
+      for (let i = 0; i < prevScCount + 5; i++) {
+        try {
+          if (m.getLayer(`sc-stroke-${i}`)) m.removeLayer(`sc-stroke-${i}`);
+          if (m.getLayer(`sc-fill-${i}`)) m.removeLayer(`sc-fill-${i}`);
+          if (m.getSource(`sc-src-${i}`)) m.removeSource(`sc-src-${i}`);
+        } catch {}
       }
 
       // ── Remove old sensor dot markers ──
@@ -250,19 +252,9 @@ export default function MapPage() {
         m.addLayer({ id: fillId, type: 'fill', source: srcId, paint: { 'fill-color': fillColor, 'fill-opacity': depthAlpha } });
         m.addLayer({ id: strokeId, type: 'line', source: srcId, paint: { 'line-color': strokeColor, 'line-width': 2, 'line-opacity': 1, 'line-dasharray': sensor.status === 'OK' ? [1] : [2, 1.5] } });
 
-        const size = sensor.status === 'ALERT' ? 24 : 20;
+        const size = sensor.status === 'ALERT' ? 20 : 16;
         const el = document.createElement('div');
-        el.style.cssText = `position:relative;width:${size}px;height:${size}px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 8px ${color}80, 0 0 20px ${color}40;cursor:pointer;transition:transform 0.2s;`;
-        // White inner dot
-        const inner = document.createElement('div');
-        inner.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:4px;height:4px;border-radius:50%;background:white;';
-        el.appendChild(inner);
-        // Pulsing ring for ALERT/WARN sensors
-        if (sensor.status !== 'OK') {
-          const pulse = document.createElement('div');
-          pulse.style.cssText = `position:absolute;inset:-8px;border-radius:50%;border:2px solid ${color};animation:sensorPulse ${sensor.status === 'ALERT' ? '1.2s' : '2s'} ease-out infinite;pointer-events:none;`;
-          el.appendChild(pulse);
-        }
+        el.style.cssText = `width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);cursor:pointer;`;
         const mk = new mapboxgl.Marker({ element: el, anchor: 'center' })
           .setLngLat([sensor.lng, sensor.lat])
           .addTo(m);
@@ -320,7 +312,7 @@ export default function MapPage() {
   }, [mapReady, sensors, watchedLocations, liveRadiusUpdates]);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-[#0c1021]">
+    <div className="relative w-full h-[100dvh] overflow-hidden bg-[#0c1021]" style={{ height: '100dvh' }}>
       <style>{`
         .mapboxgl-popup-content { background:transparent!important;padding:0!important;box-shadow:none!important; }
         .mapboxgl-popup-tip { display:none!important; }
@@ -328,7 +320,6 @@ export default function MapPage() {
         .mapboxgl-ctrl-group { background:white!important;border:none!important;box-shadow:0 2px 8px rgba(0,0,0,0.15)!important; }
         .mapboxgl-ctrl-logo { display:none!important; }
         .mapboxgl-ctrl-attrib { display:none!important; }
-        @keyframes sensorPulse { 0%{transform:scale(0.8);opacity:0.6;} 100%{transform:scale(1.8);opacity:0;} }
       `}</style>
 
       {isLoading && (
