@@ -242,7 +242,7 @@ export default function MapPage() {
       });
 
       // ── Draw sensor radius circles + dot markers ──
-      const SENSOR_RADIUS_M = 2.5;
+      const SENSOR_RADIUS_M = 10;
       sensors.forEach((sensor, i) => {
         const color = getWaterBlue(sensor.waterLevelCm);
 
