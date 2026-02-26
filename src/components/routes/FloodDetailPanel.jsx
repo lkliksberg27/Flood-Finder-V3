@@ -1,7 +1,6 @@
 import React from 'react';
-import { Droplet } from 'lucide-react';
+import { AlertTriangle, AlertCircle, Droplet } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { getWaterBlueTw } from '@/utils';
 
 export default function FloodDetailPanel({ sensors }) {
   if (!sensors || sensors.length === 0) return null;
@@ -15,17 +14,20 @@ export default function FloodDetailPanel({ sensors }) {
       <h4 className="text-xs uppercase text-gray-500 font-medium mb-2">Flooding Sensors</h4>
       <div className="space-y-2">
         {sensors.map(sensor => {
-          const tw = getWaterBlueTw(sensor.waterLevelCm);
-
+          const isAlert = sensor.status === 'ALERT';
+          const Icon = isAlert ? AlertTriangle : AlertCircle;
+          const color = isAlert ? 'text-red-400' : 'text-amber-400';
+          const bgColor = isAlert ? 'bg-red-500/10' : 'bg-amber-500/10';
+          
           return (
-            <div key={sensor.id} className={`bg-blue-500/10 rounded-lg p-2 flex items-center justify-between`}>
+            <div key={sensor.id} className={`${bgColor} rounded-lg p-2 flex items-center justify-between`}>
               <div className="flex items-center gap-2">
-                <Droplet className={`w-4 h-4 ${tw.text}`} />
+                <Icon className={`w-4 h-4 ${color}`} />
                 <span className="text-sm text-white">{sensor.name}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Droplet className={`w-3 h-3 ${tw.text}`} />
-                <span className={`text-sm font-medium ${tw.text}`}>{sensor.waterLevelCm} cm</span>
+                <Droplet className={`w-3 h-3 ${color}`} />
+                <span className={`text-sm font-medium ${color}`}>{sensor.waterLevelCm} cm</span>
               </div>
             </div>
           );
