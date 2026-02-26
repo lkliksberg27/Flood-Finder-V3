@@ -22,7 +22,6 @@ export default function MapPage() {
   const [cityName, setCityName] = useState('');
   const [mapReady, setMapReady] = useState(false);
   const [mapError, setMapError] = useState(null);
-  const popupRef = useRef(null);
   const [liveRadiusUpdates, setLiveRadiusUpdates] = useState({});
   const userCoordsRef = useRef(null);
 
@@ -264,24 +263,19 @@ export default function MapPage() {
         m.addLayer({ id: `sc-stroke-${i}`, type: 'line', source: srcId, paint: { 'line-color': color, 'line-width': 1.5, 'line-opacity': 0.5 } });
 
         const el = document.createElement('div');
-        el.style.cssText = `width:16px;height:16px;border-radius:50%;background:${DARK_BLUE};border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);cursor:pointer;`;
+        el.style.cssText = `width:14px;height:14px;border-radius:50%;background:${DARK_BLUE};border:2px solid white;box-shadow:0 1px 6px rgba(0,0,0,0.4);cursor:pointer;`;
+        const popup = new mapboxgl.Popup({ closeButton: true, offset: 14, className: 'sensor-popup' })
+          .setHTML(`
+            <div style="background:#151a2e;border:1px solid rgba(255,255,255,0.15);border-radius:14px;overflow:hidden;min-width:140px;color:white;font-family:Inter,system-ui,sans-serif;text-align:center;padding:14px 18px;">
+              <div style="font-weight:600;font-size:12px;color:#9ca3af;margin-bottom:6px;">${sensor.name}</div>
+              <div style="font-size:36px;font-weight:800;color:${color};line-height:1;">${sensor.waterLevelCm ?? 0}</div>
+              <div style="font-size:12px;color:#6b7280;margin-top:2px;">cm water height</div>
+            </div>
+          `);
         const mk = new mapboxgl.Marker({ element: el, anchor: 'center' })
           .setLngLat([sensor.lng, sensor.lat])
+          .setPopup(popup)
           .addTo(m);
-
-        el.addEventListener('click', () => {
-          popupRef.current?.remove();
-          popupRef.current = new mapboxgl.Popup({ closeButton: true, offset: 14, className: 'sensor-popup' })
-            .setLngLat([sensor.lng, sensor.lat])
-            .setHTML(`
-              <div style="background:#151a2e;border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;min-width:160px;color:white;font-family:Inter,system-ui,sans-serif;text-align:center;padding:16px 20px;">
-                <div style="font-weight:600;font-size:13px;color:#9ca3af;margin-bottom:8px;">${sensor.name}</div>
-                <div style="font-size:40px;font-weight:800;color:${color};line-height:1;">${sensor.waterLevelCm}</div>
-                <div style="font-size:13px;color:#6b7280;margin-top:2px;">cm</div>
-              </div>
-            `)
-            .addTo(m);
-        });
 
         markersRef.current.push(mk);
       });
