@@ -148,12 +148,11 @@ export default function LocationsPage() {
 
         const el = document.createElement('div');
         el.style.cssText = `width:14px;height:14px;border-radius:50%;background:${DARK_BLUE};border:2px solid white;box-shadow:0 1px 6px rgba(0,0,0,0.4);cursor:pointer;`;
-        const popup = new mapboxgl.Popup({ closeButton: true, offset: 14, className: 'sensor-popup' })
+        const popup = new mapboxgl.Popup({ closeButton: true, offset: 10, className: 'sensor-popup' })
           .setHTML(`
-            <div style="background:#151a2e;border:1px solid rgba(255,255,255,0.15);border-radius:14px;overflow:hidden;min-width:140px;color:white;font-family:Inter,system-ui,sans-serif;text-align:center;padding:14px 18px;">
-              <div style="font-weight:600;font-size:12px;color:#9ca3af;margin-bottom:6px;">${sensor.name}</div>
-              <div style="font-size:36px;font-weight:800;color:${color};line-height:1;">${sensor.waterLevelCm ?? 0}</div>
-              <div style="font-size:12px;color:#6b7280;margin-top:2px;">cm water height</div>
+            <div style="background:#151a2e;border:1px solid rgba(255,255,255,0.15);border-radius:10px;overflow:hidden;color:white;font-family:Inter,system-ui,sans-serif;text-align:center;padding:8px 14px;">
+              <div style="font-weight:600;font-size:10px;color:#9ca3af;margin-bottom:3px;">${sensor.name}</div>
+              <div style="font-size:22px;font-weight:800;color:${color};line-height:1;">${sensor.waterLevelCm ?? 0}<span style="font-size:11px;font-weight:600;color:#6b7280;margin-left:2px;">cm</span></div>
             </div>
           `);
         const mk = new mapboxgl.Marker({ element: el, anchor: 'center' })
@@ -175,10 +174,10 @@ export default function LocationsPage() {
         el.appendChild(inner);
         const mk = new mapboxgl.Marker({ element: el, anchor: 'bottom-left' })
           .setLngLat([loc.lng, loc.lat])
-          .setPopup(new mapboxgl.Popup({ offset: 20, className: 'sensor-popup' }).setHTML(
-            `<div style="background:#151a2e;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;min-width:140px;color:white;font-family:Inter,sans-serif;">
-              <div style="font-weight:600;font-size:13px;margin-bottom:2px;">${loc.name}</div>
-              <div style="color:#6b7280;font-size:11px;">${loc.address || ''}</div>
+          .setPopup(new mapboxgl.Popup({ offset: 16, className: 'sensor-popup' }).setHTML(
+            `<div style="background:#151a2e;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px 12px;color:white;font-family:Inter,sans-serif;">
+              <div style="font-weight:600;font-size:11px;">${loc.name}</div>
+              <div style="color:#6b7280;font-size:10px;margin-top:1px;">${loc.address || ''}</div>
             </div>`
           ))
           .addTo(m);
@@ -242,7 +241,7 @@ export default function LocationsPage() {
       />
 
       {/* Map */}
-      <div className="relative w-full h-[28vh] min-h-[160px] border-b border-white/5">
+      <div className="relative w-full h-[45vh] min-h-[220px] border-b border-white/5">
         <div ref={mapContainerRef} className="absolute inset-0" />
         <style>{`
           .mapboxgl-popup-content { background:transparent!important;padding:0!important;box-shadow:none!important; }
@@ -252,7 +251,7 @@ export default function LocationsPage() {
         `}</style>
       </div>
 
-      <div className="flex-1 px-4 py-4 space-y-3">
+      <div className="flex-1 px-3 py-3 space-y-2 overflow-y-auto">
         <AnimatePresence>
           {showAdd && (
             <AddLocationForm
