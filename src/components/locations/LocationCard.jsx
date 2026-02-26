@@ -5,9 +5,9 @@ import { Slider } from '@/components/ui/slider';
 import { getDistanceMeters } from '@/utils';
 
 const LEVELS = [
-  { value: 'ANY',   label: 'Any',     emoji: '🔵', color: 'text-blue-400',  activeBg: 'bg-blue-500/20 border-blue-500/40' },
-  { value: 'WARN',  label: 'Warning+',emoji: '⚠️', color: 'text-amber-400', activeBg: 'bg-amber-500/20 border-amber-500/40' },
-  { value: 'ALERT', label: 'Severe',  emoji: '🚨', color: 'text-red-400',   activeBg: 'bg-red-500/20 border-red-500/40' },
+  { value: 'ANY',   label: 'Any',     emoji: '💧', color: 'text-blue-300',  activeBg: 'bg-blue-400/20 border-blue-400/40' },
+  { value: 'WARN',  label: 'Moderate+',emoji: '💧', color: 'text-blue-400', activeBg: 'bg-blue-500/20 border-blue-500/40' },
+  { value: 'ALERT', label: 'Deep',    emoji: '💧', color: 'text-blue-500',  activeBg: 'bg-blue-600/20 border-blue-600/40' },
 ];
 
 const RADIUS_MIN = 50;
@@ -41,11 +41,11 @@ export default function LocationCard({ location, sensors, useMetric = true, onDe
   const worstStatus = triggeredSensors.reduce((worst, s) => levelOrder[s.status] > levelOrder[worst] ? s.status : worst, 'OK');
 
   const statusBorder = isTriggered
-    ? (worstStatus === 'ALERT' ? 'border-red-500/40 bg-red-500/5' : 'border-amber-500/40 bg-amber-500/5')
+    ? (worstStatus === 'ALERT' ? 'border-blue-500/40 bg-blue-500/5' : 'border-blue-400/30 bg-blue-400/5')
     : 'border-white/5 bg-[#151a2e]';
   const dotColor = isTriggered
-    ? (worstStatus === 'ALERT' ? 'bg-red-500' : 'bg-amber-400')
-    : 'bg-emerald-500';
+    ? (worstStatus === 'ALERT' ? 'bg-blue-500' : 'bg-blue-400')
+    : 'bg-blue-300';
 
   const currentRadius = location.alertRadiusMeters || 500;
   const currentLevel = location.alertLevel || 'WARN';
@@ -64,7 +64,7 @@ export default function LocationCard({ location, sensors, useMetric = true, onDe
             <div className="flex items-center justify-between gap-2">
               <span className="text-white font-semibold text-sm truncate" title={location.name}>{location.name}</span>
               {isTriggered
-                ? <Bell className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                ? <Bell className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
                 : <BellOff className="w-3.5 h-3.5 text-gray-600 flex-shrink-0" />
               }
             </div>
@@ -74,11 +74,11 @@ export default function LocationCard({ location, sensors, useMetric = true, onDe
 
         {/* Status badge */}
         {isTriggered ? (
-          <div className={`mt-2 text-xs px-2.5 py-1.5 rounded-lg ${worstStatus === 'ALERT' ? 'bg-red-500/15 text-red-400 border border-red-500/25' : 'bg-amber-500/15 text-amber-400 border border-amber-500/25'}`}>
-            {triggeredSensors.length} sensor{triggeredSensors.length > 1 ? 's' : ''} {worstStatus === 'ALERT' ? 'flooding' : 'with warning'} within {useMetric ? `${currentRadius}m` : `${Math.round(currentRadius * 3.28084)} ft`}
+          <div className={`mt-2 text-xs px-2.5 py-1.5 rounded-lg ${worstStatus === 'ALERT' ? 'bg-blue-500/15 text-blue-400 border border-blue-500/25' : 'bg-blue-400/15 text-blue-300 border border-blue-400/25'}`}>
+            {triggeredSensors.length} sensor{triggeredSensors.length > 1 ? 's' : ''} {worstStatus === 'ALERT' ? 'with deep water' : 'with rising water'} within {useMetric ? `${currentRadius}m` : `${Math.round(currentRadius * 3.28084)} ft`}
           </div>
         ) : (
-          <div className="mt-1.5 text-xs text-emerald-400">✓ No flooding nearby</div>
+          <div className="mt-1.5 text-xs text-blue-300">✓ No flooding nearby</div>
         )}
       </div>
 

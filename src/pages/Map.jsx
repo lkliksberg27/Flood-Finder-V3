@@ -7,18 +7,10 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import MapHeader from '@/components/map/MapHeader';
 import MapLegend from '@/components/map/MapLegend';
 import BottomNav from '@/components/ui/BottomNav';
+import { getWaterBlue } from '@/utils';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoibGtsaWNreTI3IiwiYSI6ImNtbHF5ZnF6ZjA2Y3czZXB3d2h1cXlxa3MifQ.CdPYVfniU1Y3_23xrzCk5w';
 mapboxgl.accessToken = MAPBOX_TOKEN;
-
-const getStatusColor = (status) => {
-  switch (status) {
-    case 'OK':    return '#34d399';
-    case 'WARN':  return '#fbbf24';
-    case 'ALERT': return '#f87171';
-    default:      return '#9ca3af';
-  }
-};
 
 export default function MapPage() {
   const mapContainer = useRef(null);
@@ -252,22 +244,20 @@ export default function MapPage() {
       // ── Draw sensor circles + dot markers ──
       const SENSOR_RADIUS_M = 50;
       sensors.forEach((sensor, i) => {
-        const color = getStatusColor(sensor.status);
+        const color = getWaterBlue(sensor.waterLevelCm);
         const depthAlpha = Math.min(0.15 + (sensor.waterLevelCm / 100) * 0.45, 0.6);
         const srcId = `sc-src-${i}`;
         const fillId = `sc-fill-${i}`;
         const strokeId = `sc-stroke-${i}`;
 
-        const fillColor = sensor.status === 'ALERT' ? '#ef4444' : sensor.status === 'WARN' ? '#f59e0b' : '#3b82f6';
-        const strokeColor = sensor.status === 'ALERT' ? '#dc2626' : sensor.status === 'WARN' ? '#d97706' : '#2563eb';
         m.addSource(srcId, {
           type: 'geojson',
           data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [makeCircleCoords(sensor.lat, sensor.lng, SENSOR_RADIUS_M)] } },
         });
-        m.addLayer({ id: fillId, type: 'fill', source: srcId, paint: { 'fill-color': fillColor, 'fill-opacity': depthAlpha } });
-        m.addLayer({ id: strokeId, type: 'line', source: srcId, paint: { 'line-color': strokeColor, 'line-width': 2, 'line-opacity': 1, 'line-dasharray': sensor.status === 'OK' ? [1] : [2, 1.5] } });
+        m.addLayer({ id: fillId, type: 'fill', source: srcId, paint: { 'fill-color': color, 'fill-opacity': depthAlpha } });
+        m.addLayer({ id: strokeId, type: 'line', source: srcId, paint: { 'line-color': color, 'line-width': 2, 'line-opacity': 1 } });
 
-        const size = sensor.status === 'ALERT' ? 20 : 16;
+        const size = Math.round(14 + (sensor.waterLevelCm / 100) * 8);
         const el = document.createElement('div');
         el.style.cssText = `width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);cursor:pointer;`;
         const mk = new mapboxgl.Marker({ element: el, anchor: 'center' })
@@ -280,8 +270,8 @@ export default function MapPage() {
           const battPct = sensor.batteryV ? Math.min(100, Math.max(0, Math.round(((sensor.batteryV - 3.0) / (4.2 - 3.0)) * 100))) : null;
           const battColor = battPct !== null ? (battPct <= 20 ? '#f87171' : battPct <= 40 ? '#fbbf24' : '#34d399') : '#6b7280';
           const waterPct = Math.min(100, Math.round((sensor.waterLevelCm / 100) * 100));
-          const statusLabel = sensor.status === 'OK' ? '✓ Clear' : sensor.status === 'WARN' ? '⚠ Warning' : '🚨 Flooding';
-          const statusBg = sensor.status === 'ALERT' ? 'rgba(239,68,68,0.15)' : sensor.status === 'WARN' ? 'rgba(245,158,11,0.15)' : 'rgba(16,185,129,0.15)';
+          const depthLabel = sensor.waterLevelCm <= 15 ? 'Low' : sensor.waterLevelCm <= 40 ? 'Moderate' : sensor.waterLevelCm <= 65 ? 'High' : 'Severe';
+          const statusBg = `${color}26`;
           popupRef.current = new mapboxgl.Popup({ closeButton: true, offset: 14, className: 'sensor-popup' })
             .setLngLat([sensor.lng, sensor.lat])
             .setHTML(`
@@ -290,7 +280,7 @@ export default function MapPage() {
                 <div style="padding:14px 16px;">
                   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
                     <span style="font-weight:700;font-size:16px;">${sensor.name}</span>
-                    <span style="font-size:11px;font-weight:700;color:${color};padding:4px 10px;border-radius:10px;background:${statusBg};">${statusLabel}</span>
+                    <span style="font-size:11px;font-weight:700;color:${color};padding:4px 10px;border-radius:10px;background:${statusBg};">${depthLabel}</span>
                   </div>
                   <div style="margin-bottom:10px;">
                     <div style="display:flex;justify-content:space-between;margin-bottom:4px;">

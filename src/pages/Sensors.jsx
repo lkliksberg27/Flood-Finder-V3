@@ -8,12 +8,7 @@ import PageHeader from '@/components/ui/PageHeader';
 import LoadingScreen from '@/components/ui/LoadingScreen';
 import EmptyState from '@/components/ui/EmptyState';
 import { motion } from 'framer-motion';
-
-const STATUS_CONFIG = {
-  OK:    { label: 'Clear',    color: 'text-emerald-400', bg: 'bg-emerald-500/15 border-emerald-500/25', dot: 'bg-emerald-400' },
-  WARN:  { label: 'Warning',  color: 'text-amber-400',   bg: 'bg-amber-500/15 border-amber-500/25',     dot: 'bg-amber-400' },
-  ALERT: { label: 'Flooding', color: 'text-red-400',     bg: 'bg-red-500/15 border-red-500/25',         dot: 'bg-red-400 animate-pulse' },
-};
+import { getWaterBlue, getWaterBlueTw } from '@/utils';
 
 function BatteryIcon({ voltage }) {
   const pct = Math.min(100, Math.max(0, ((voltage - 3.0) / (4.2 - 3.0)) * 100));
@@ -95,7 +90,8 @@ export default function SensorsPage() {
           />
         )}
         {filtered.map((sensor, i) => {
-          const cfg = STATUS_CONFIG[sensor.status] || STATUS_CONFIG.OK;
+          const tw = getWaterBlueTw(sensor.waterLevelCm);
+          const blueHex = getWaterBlue(sensor.waterLevelCm);
           const pct = batteryPct(sensor.batteryV);
           return (
             <motion.div
@@ -112,9 +108,7 @@ export default function SensorsPage() {
                   animate={{ height: `${Math.min(100, Math.round((sensor.waterLevelCm / 100) * 100))}%` }}
                   transition={{ delay: i * 0.03 + 0.2, duration: 0.5, ease: 'easeOut' }}
                   className="absolute bottom-0 left-0 right-0 rounded-t-full"
-                  style={{
-                    background: sensor.status === 'ALERT' ? '#f87171' : sensor.status === 'WARN' ? '#fbbf24' : '#34d399',
-                  }}
+                  style={{ background: blueHex }}
                 />
               </div>
 
@@ -123,13 +117,13 @@ export default function SensorsPage() {
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${cfg.dot}`} />
+                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${tw.dot}`} />
                       <span className="text-white font-semibold text-sm truncate">{sensor.name}</span>
                     </div>
                     <p className="text-gray-500 text-xs mt-0.5 ml-4">{sensor.deviceId}</p>
                   </div>
-                  <span className={`flex-shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${cfg.bg} ${cfg.color}`}>
-                    {cfg.label}
+                  <span className={`flex-shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full border ${tw.bg} ${tw.border} ${tw.text}`}>
+                    {tw.label}
                   </span>
                 </div>
 
@@ -141,7 +135,7 @@ export default function SensorsPage() {
                       <Droplets className="w-3 h-3 text-blue-400 flex-shrink-0" />
                       <span className="text-gray-500 text-[10px]">Water</span>
                     </div>
-                    <p className={`text-sm font-bold ${cfg.color}`}>{sensor.waterLevelCm} cm</p>
+                    <p className={`text-sm font-bold ${tw.text}`}>{sensor.waterLevelCm} cm</p>
                   </div>
 
                   {/* Battery */}
