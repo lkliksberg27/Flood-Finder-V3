@@ -13,16 +13,30 @@ export default function AddLocationForm({ onSave, onClose }) {
   const [alertLevel, setAlertLevel] = useState('WARN');
   const [saving, setSaving] = useState(false);
   const debounceRef = useRef(null);
+  const abortRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(debounceRef.current);
+      abortRef.current?.abort();
+    };
+  }, []);
 
   const searchAddress = (val) => {
     setAddress(val);
     setCoords(null);
     clearTimeout(debounceRef.current);
+    abortRef.current?.abort();
     if (!val.trim()) { setSuggestions([]); return; }
     debounceRef.current = setTimeout(async () => {
-      const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(val)}.json?access_token=${MAPBOX_TOKEN}&limit=5`);
-      const data = await res.json();
-      setSuggestions(data.features || []);
+      abortRef.current = new AbortController();
+      try {
+        const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(val)}.json?access_token=${MAPBOX_TOKEN}&limit=5`, { signal: abortRef.current.signal });
+        const data = await res.json();
+        setSuggestions(data.features || []);
+      } catch (err) {
+        if (err.name !== 'AbortError') console.error('Address search failed:', err);
+      }
     }, 350);
   };
 

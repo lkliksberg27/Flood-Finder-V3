@@ -26,7 +26,11 @@ function isWithinSchedule(course) {
     const [eh, em] = (win.endTime || '23:59').split(':').map(Number);
     const start = sh * 60 + sm;
     const end = eh * 60 + em;
-    return nowMinutes >= start && nowMinutes <= end;
+    // Handle windows that cross midnight (e.g. 22:00 to 06:00)
+    if (start <= end) {
+      return nowMinutes >= start && nowMinutes <= end;
+    }
+    return nowMinutes >= start || nowMinutes <= end;
   });
 }
 
