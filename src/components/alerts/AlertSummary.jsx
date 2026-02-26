@@ -1,32 +1,32 @@
 import React from 'react';
-import { AlertTriangle, AlertCircle, Activity } from 'lucide-react';
+import { Droplets, Activity } from 'lucide-react';
 
 export default function AlertSummary({ sensors }) {
-  const alertCount = sensors.filter(s => s.status === 'ALERT').length;
-  const warnCount = sensors.filter(s => s.status === 'WARN').length;
-  const totalActive = alertCount + warnCount;
+  const highCount = sensors.filter(s => s.waterLevelCm > 65).length;
+  const midCount = sensors.filter(s => s.waterLevelCm > 15 && s.waterLevelCm <= 65).length;
+  const totalActive = sensors.filter(s => s.status === 'WARN' || s.status === 'ALERT').length;
 
   return (
     <div className="grid grid-cols-3 gap-2 mb-6">
-      <div className="bg-red-500/8 border border-red-500/12 rounded-2xl p-3 relative overflow-hidden">
-        <div className="absolute inset-0 bg-red-500/5 rounded-full blur-xl scale-150" />
+      <div className="bg-blue-600/10 border border-blue-600/20 rounded-2xl p-3 relative overflow-hidden">
+        <div className="absolute inset-0 bg-blue-600/10 rounded-full blur-xl scale-150" />
         <div className="relative">
           <div className="flex items-center gap-1.5 mb-1.5">
-            <AlertTriangle className="w-4 h-4 text-red-300" />
-            <span className="text-[10px] text-red-300 uppercase font-medium">Severe</span>
+            <Droplets className="w-4 h-4 text-blue-400" />
+            <span className="text-[10px] text-blue-400 uppercase font-medium">Deep</span>
           </div>
-          <p className="text-3xl font-bold text-white">{alertCount}</p>
+          <p className="text-3xl font-bold text-white">{highCount}</p>
         </div>
       </div>
 
-      <div className="bg-amber-500/8 border border-amber-500/12 rounded-2xl p-3 relative overflow-hidden">
-        <div className="absolute inset-0 bg-amber-500/5 rounded-full blur-xl scale-150" />
+      <div className="bg-blue-400/10 border border-blue-400/20 rounded-2xl p-3 relative overflow-hidden">
+        <div className="absolute inset-0 bg-blue-400/10 rounded-full blur-xl scale-150" />
         <div className="relative">
           <div className="flex items-center gap-1.5 mb-1.5">
-            <AlertCircle className="w-4 h-4 text-amber-300" />
-            <span className="text-[10px] text-amber-300 uppercase font-medium">Moderate</span>
+            <Droplets className="w-4 h-4 text-blue-300" />
+            <span className="text-[10px] text-blue-300 uppercase font-medium">Moderate</span>
           </div>
-          <p className="text-3xl font-bold text-white">{warnCount}</p>
+          <p className="text-3xl font-bold text-white">{midCount}</p>
         </div>
       </div>
 

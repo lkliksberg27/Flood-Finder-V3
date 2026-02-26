@@ -3,6 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { checkRouteFlooding, fetchAvoidanceRoute } from './courseUtils';
 import { AlertTriangle, AlertCircle, CheckCircle2, RefreshCw } from 'lucide-react';
+import { getWaterBlue } from '@/utils';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoibGtsaWNreTI3IiwiYSI6ImNtbHF5ZnF6ZjA2Y3czZXB3d2h1cXlxa3MifQ.CdPYVfniU1Y3_23xrzCk5w';
 mapboxgl.accessToken = MAPBOX_TOKEN;
@@ -158,7 +159,7 @@ export default function RoutesMap({ selectedRoute, sensors, course, locationEnab
       sensorMarkerRefs.current.forEach(m => m.remove());
       sensorMarkerRefs.current = [];
       sensors.forEach(sensor => {
-        const color = sensor.status === 'OK' ? '#6ee7b7' : sensor.status === 'WARN' ? '#fcd34d' : '#fca5a5';
+        const color = getWaterBlue(sensor.waterLevelCm);
 
         const el = document.createElement('div');
         el.style.cssText = `position:relative;width:28px;height:36px;cursor:pointer;display:flex;align-items:flex-start;justify-content:center;`;
