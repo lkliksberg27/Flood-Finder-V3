@@ -289,7 +289,7 @@ export default function MapPage() {
   }, [mapReady, sensors, watchedLocations, liveRadiusUpdates]);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-[#0c1021]">
+    <div className="relative w-full overflow-hidden bg-[#0c1021]" style={{ height: '100dvh' }}>
       <style>{`
         .mapboxgl-popup-content { background:transparent!important;padding:0!important;box-shadow:none!important; }
         .mapboxgl-popup-tip { display:none!important; }
@@ -334,6 +334,7 @@ export default function MapPage() {
             onClick={handleLocateMe}
             className="bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all w-9 h-9"
             title="Go to my location"
+            aria-label="Go to my location"
           >
             <Navigation className="w-4 h-4 text-blue-600" />
           </button>
@@ -343,6 +344,7 @@ export default function MapPage() {
             onClick={() => map.current?.zoomIn()}
             className="flex items-center justify-center w-9 h-9 hover:bg-gray-50 active:scale-95 transition-all border-b border-gray-200"
             title="Zoom in"
+            aria-label="Zoom in"
           >
             <Plus className="w-4 h-4 text-gray-700" />
           </button>
@@ -350,6 +352,7 @@ export default function MapPage() {
             onClick={() => map.current?.zoomOut()}
             className="flex items-center justify-center w-9 h-9 hover:bg-gray-50 active:scale-95 transition-all"
             title="Zoom out"
+            aria-label="Zoom out"
           >
             <Minus className="w-4 h-4 text-gray-700" />
           </button>

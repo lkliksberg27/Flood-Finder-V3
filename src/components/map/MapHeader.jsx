@@ -39,6 +39,7 @@ export default function MapHeader({ sensors = [], cityName }) {
               <Link
                 to="/Settings"
                 className="flex items-center justify-center w-7 h-7 rounded-lg bg-white/10 active:scale-95 transition-all"
+                aria-label="Open settings"
               >
                 <Settings className="w-3.5 h-3.5 text-gray-300" />
               </Link>
