@@ -195,6 +195,16 @@ export default function MapPage() {
         } catch {}
       }
 
+      // ── Remove old sensor layers ──
+      const prevScCount = markersRef.current.length || sensors.length;
+      for (let i = 0; i < prevScCount + 5; i++) {
+        try {
+          if (m.getLayer(`sc-fill-${i}`)) m.removeLayer(`sc-fill-${i}`);
+          if (m.getLayer(`sc-stroke-${i}`)) m.removeLayer(`sc-stroke-${i}`);
+          if (m.getSource(`sc-src-${i}`)) m.removeSource(`sc-src-${i}`);
+        } catch {}
+      }
+
       // ── Remove old sensor dot markers ──
       markersRef.current.forEach(mk => mk.remove());
       markersRef.current = [];
@@ -231,9 +241,19 @@ export default function MapPage() {
         locationMarkersRef.current.push(mk);
       });
 
-      // ── Draw sensor dot markers ──
+      // ── Draw sensor radius circles + dot markers ──
+      const SENSOR_RADIUS_M = 2.5;
       sensors.forEach((sensor, i) => {
         const color = getWaterBlue(sensor.waterLevelCm);
+
+        // Radius circle
+        const srcId = `sc-src-${i}`;
+        m.addSource(srcId, {
+          type: 'geojson',
+          data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [makeCircleCoords(sensor.lat, sensor.lng, SENSOR_RADIUS_M)] } },
+        });
+        m.addLayer({ id: `sc-fill-${i}`, type: 'fill', source: srcId, paint: { 'fill-color': color, 'fill-opacity': 0.2 } });
+        m.addLayer({ id: `sc-stroke-${i}`, type: 'line', source: srcId, paint: { 'line-color': color, 'line-width': 1.5, 'line-opacity': 0.5 } });
 
         const el = document.createElement('div');
         el.style.cssText = `width:16px;height:16px;border-radius:50%;background:${color};border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);cursor:pointer;`;
