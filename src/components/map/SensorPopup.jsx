@@ -4,9 +4,9 @@ import { Battery, Clock, X } from 'lucide-react';
 
 const getStatusColor = (status) => {
   switch (status) {
-    case 'OK': return '#34d399';
-    case 'WARN': return '#fbbf24';
-    case 'ALERT': return '#f87171';
+    case 'OK': return '#6ee7b7';
+    case 'WARN': return '#fcd34d';
+    case 'ALERT': return '#fca5a5';
     default: return '#9ca3af';
   }
 };

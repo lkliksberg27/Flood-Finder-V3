@@ -10,9 +10,9 @@ import EmptyState from '@/components/ui/EmptyState';
 import { motion } from 'framer-motion';
 
 const STATUS_CONFIG = {
-  OK:    { label: 'Clear',    color: 'text-emerald-400', bg: 'bg-emerald-500/15 border-emerald-500/25', dot: 'bg-emerald-400' },
-  WARN:  { label: 'Warning',  color: 'text-amber-400',   bg: 'bg-amber-500/15 border-amber-500/25',     dot: 'bg-amber-400' },
-  ALERT: { label: 'Flooding', color: 'text-red-400',     bg: 'bg-red-500/15 border-red-500/25',         dot: 'bg-red-400 animate-pulse' },
+  OK:    { label: 'Clear',    color: 'text-emerald-300', bg: 'bg-emerald-500/10 border-emerald-500/15', dot: 'bg-emerald-300' },
+  WARN:  { label: 'Warning',  color: 'text-amber-300',   bg: 'bg-amber-500/10 border-amber-500/15',     dot: 'bg-amber-300' },
+  ALERT: { label: 'Flooding', color: 'text-red-300',     bg: 'bg-red-500/10 border-red-500/15',         dot: 'bg-red-300 animate-pulse' },
 };
 
 function BatteryIcon({ voltage }) {
@@ -113,7 +113,7 @@ export default function SensorsPage() {
                   transition={{ delay: i * 0.03 + 0.2, duration: 0.5, ease: 'easeOut' }}
                   className="absolute bottom-0 left-0 right-0 rounded-t-full"
                   style={{
-                    background: sensor.status === 'ALERT' ? '#f87171' : sensor.status === 'WARN' ? '#fbbf24' : '#34d399',
+                    background: sensor.status === 'ALERT' ? '#fca5a5' : sensor.status === 'WARN' ? '#fcd34d' : '#6ee7b7',
                   }}
                 />
               </div>
