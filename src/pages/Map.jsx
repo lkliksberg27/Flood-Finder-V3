@@ -195,16 +195,6 @@ export default function MapPage() {
         } catch {}
       }
 
-      // ── Remove old sensor layers (only up to actual count) ──
-      const prevScCount = markersRef.current.length || sensors.length;
-      for (let i = 0; i < prevScCount + 5; i++) {
-        try {
-          if (m.getLayer(`sc-stroke-${i}`)) m.removeLayer(`sc-stroke-${i}`);
-          if (m.getLayer(`sc-fill-${i}`)) m.removeLayer(`sc-fill-${i}`);
-          if (m.getSource(`sc-src-${i}`)) m.removeSource(`sc-src-${i}`);
-        } catch {}
-      }
-
       // ── Remove old sensor dot markers ──
       markersRef.current.forEach(mk => mk.remove());
       markersRef.current = [];
@@ -241,67 +231,35 @@ export default function MapPage() {
         locationMarkersRef.current.push(mk);
       });
 
-      // ── Draw sensor circles + dot markers ──
-      const SENSOR_RADIUS_M = 50;
+      // ── Draw sensor dot markers with gradient glow ──
       sensors.forEach((sensor, i) => {
         const color = getWaterBlue(sensor.waterLevelCm);
-        const depthAlpha = Math.min(0.15 + (sensor.waterLevelCm / 100) * 0.45, 0.6);
-        const srcId = `sc-src-${i}`;
-        const fillId = `sc-fill-${i}`;
-        const strokeId = `sc-stroke-${i}`;
 
-        m.addSource(srcId, {
-          type: 'geojson',
-          data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [makeCircleCoords(sensor.lat, sensor.lng, SENSOR_RADIUS_M)] } },
-        });
-        m.addLayer({ id: fillId, type: 'fill', source: srcId, paint: { 'fill-color': color, 'fill-opacity': depthAlpha } });
-        m.addLayer({ id: strokeId, type: 'line', source: srcId, paint: { 'line-color': color, 'line-width': 2, 'line-opacity': 1 } });
-
-        const size = Math.round(14 + (sensor.waterLevelCm / 100) * 8);
+        // Outer glow + inner dot
         const el = document.createElement('div');
-        el.style.cssText = `width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);cursor:pointer;`;
+        el.style.cssText = `width:36px;height:36px;position:relative;cursor:pointer;`;
+        // Gradient glow
+        const glow = document.createElement('div');
+        glow.style.cssText = `position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,${color}55 0%,${color}00 70%);`;
+        el.appendChild(glow);
+        // Solid center dot
+        const dot = document.createElement('div');
+        dot.style.cssText = `position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:${color};border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);`;
+        el.appendChild(dot);
+
         const mk = new mapboxgl.Marker({ element: el, anchor: 'center' })
           .setLngLat([sensor.lng, sensor.lat])
           .addTo(m);
 
         el.addEventListener('click', () => {
           popupRef.current?.remove();
-          const lastSeen = sensor.lastSeen ? new Date(sensor.lastSeen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
-          const battPct = sensor.batteryV ? Math.min(100, Math.max(0, Math.round(((sensor.batteryV - 3.0) / (4.2 - 3.0)) * 100))) : null;
-          const battColor = battPct !== null ? (battPct <= 20 ? '#f87171' : battPct <= 40 ? '#fbbf24' : '#34d399') : '#6b7280';
-          const waterPct = Math.min(100, Math.round((sensor.waterLevelCm / 100) * 100));
-          const depthLabel = sensor.waterLevelCm <= 15 ? 'Low' : sensor.waterLevelCm <= 40 ? 'Moderate' : sensor.waterLevelCm <= 65 ? 'High' : 'Severe';
-          const statusBg = `${color}26`;
           popupRef.current = new mapboxgl.Popup({ closeButton: true, offset: 14, className: 'sensor-popup' })
             .setLngLat([sensor.lng, sensor.lat])
             .setHTML(`
-              <div style="background:linear-gradient(180deg,#1a1f35,#151a2e);border:1px solid rgba(255,255,255,0.1);border-radius:16px;overflow:hidden;min-width:240px;color:white;font-family:Inter,system-ui,sans-serif;">
-                <div style="height:4px;background:${color};"></div>
-                <div style="padding:14px 16px;">
-                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-                    <span style="font-weight:700;font-size:16px;">${sensor.name}</span>
-                    <span style="font-size:11px;font-weight:700;color:${color};padding:4px 10px;border-radius:10px;background:${statusBg};">${depthLabel}</span>
-                  </div>
-                  <div style="margin-bottom:10px;">
-                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-                      <span style="color:#9ca3af;font-size:12px;">Water level</span>
-                      <span style="font-size:13px;font-weight:700;">${sensor.waterLevelCm} cm</span>
-                    </div>
-                    <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;">
-                      <div style="height:100%;width:${waterPct}%;background:${color};border-radius:3px;transition:width 0.3s;"></div>
-                    </div>
-                  </div>
-                  <div style="display:flex;gap:12px;">
-                    ${battPct !== null ? `<div style="flex:1;">
-                      <span style="color:#9ca3af;font-size:11px;display:block;">Battery</span>
-                      <span style="font-size:13px;font-weight:600;color:${battColor};">${battPct}%</span>
-                    </div>` : ''}
-                    <div style="flex:1;">
-                      <span style="color:#9ca3af;font-size:11px;display:block;">Last seen</span>
-                      <span style="font-size:13px;color:#9ca3af;">${lastSeen}</span>
-                    </div>
-                  </div>
-                </div>
+              <div style="background:#151a2e;border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;min-width:160px;color:white;font-family:Inter,system-ui,sans-serif;text-align:center;padding:16px 20px;">
+                <div style="font-weight:600;font-size:13px;color:#9ca3af;margin-bottom:8px;">${sensor.name}</div>
+                <div style="font-size:40px;font-weight:800;color:${color};line-height:1;">${sensor.waterLevelCm}</div>
+                <div style="font-size:13px;color:#6b7280;margin-top:2px;">cm</div>
               </div>
             `)
             .addTo(m);
