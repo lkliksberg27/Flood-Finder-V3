@@ -148,13 +148,8 @@ export default function LocationsPage() {
 
         const el = document.createElement('div');
         el.style.cssText = `width:14px;height:14px;border-radius:50%;background:${DARK_BLUE};border:2px solid white;box-shadow:0 1px 6px rgba(0,0,0,0.4);cursor:pointer;`;
-        const popup = new mapboxgl.Popup({ closeButton: true, offset: 10, className: 'sensor-popup' })
-          .setHTML(`
-            <div style="background:#151a2e;border:1px solid rgba(255,255,255,0.15);border-radius:10px;overflow:hidden;color:white;font-family:Inter,system-ui,sans-serif;text-align:center;padding:8px 14px;">
-              <div style="font-weight:600;font-size:10px;color:#9ca3af;margin-bottom:3px;">${sensor.name}</div>
-              <div style="font-size:22px;font-weight:800;color:${color};line-height:1;">${sensor.waterLevelCm ?? 0}<span style="font-size:11px;font-weight:600;color:#6b7280;margin-left:2px;">cm</span></div>
-            </div>
-          `);
+        const popup = new mapboxgl.Popup({ closeButton: false, offset: 8, className: 'sensor-popup' })
+          .setHTML(`<div style="background:#151a2e;border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:white;font-family:Inter,system-ui,sans-serif;text-align:center;padding:6px 10px;white-space:nowrap;"><span style="font-weight:700;font-size:14px;color:${color};">${sensor.waterLevelCm ?? 0}</span><span style="font-size:10px;color:#6b7280;margin-left:2px;">cm</span></div>`);
         const mk = new mapboxgl.Marker({ element: el, anchor: 'center' })
           .setLngLat([sensor.lng, sensor.lat])
           .setPopup(popup)
@@ -174,11 +169,8 @@ export default function LocationsPage() {
         el.appendChild(inner);
         const mk = new mapboxgl.Marker({ element: el, anchor: 'bottom-left' })
           .setLngLat([loc.lng, loc.lat])
-          .setPopup(new mapboxgl.Popup({ offset: 16, className: 'sensor-popup' }).setHTML(
-            `<div style="background:#151a2e;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px 12px;color:white;font-family:Inter,sans-serif;">
-              <div style="font-weight:600;font-size:11px;">${loc.name}</div>
-              <div style="color:#6b7280;font-size:10px;margin-top:1px;">${loc.address || ''}</div>
-            </div>`
+          .setPopup(new mapboxgl.Popup({ closeButton: false, offset: 14, className: 'sensor-popup' }).setHTML(
+            `<div style="background:#151a2e;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:6px 10px;color:white;font-family:Inter,sans-serif;"><div style="font-weight:600;font-size:11px;">${loc.name}</div></div>`
           ))
           .addTo(m);
         markersRef.current.push(mk);
@@ -245,6 +237,7 @@ export default function LocationsPage() {
         <div ref={mapContainerRef} className="absolute inset-0" />
         <style>{`
           .mapboxgl-popup-content { background:transparent!important;padding:0!important;box-shadow:none!important; }
+          .mapboxgl-popup-close-button { color:#6b7280!important;font-size:14px!important;right:4px!important;top:2px!important;padding:0!important;line-height:1!important; }
           .mapboxgl-popup-tip { display:none!important; }
           .mapboxgl-ctrl-logo { display:none!important; }
           .mapboxgl-ctrl-attrib { display:none!important; }
