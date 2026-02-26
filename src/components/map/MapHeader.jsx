@@ -4,9 +4,8 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
 export default function MapHeader({ sensors = [], cityName }) {
-  const warnCount = sensors.filter(s => s.status === 'WARN').length;
-  const alertCount = sensors.filter(s => s.status === 'ALERT').length;
-  const allClear = warnCount === 0 && alertCount === 0;
+  const activeCount = sensors.filter(s => s.status === 'WARN' || s.status === 'ALERT').length;
+  const allClear = activeCount === 0;
 
   return (
     <div className="absolute top-0 left-0 right-0 z-[1000] pointer-events-none">
@@ -24,17 +23,17 @@ export default function MapHeader({ sensors = [], cityName }) {
             </div>
             <div className="flex items-center gap-1.5">
               {allClear ? (
-                <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 text-[11px] font-semibold">
-                  <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
+                <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-500/15 border border-blue-500/25 text-blue-300 text-[11px] font-semibold">
+                  <span className="w-1.5 h-1.5 bg-blue-300 rounded-full" />
                   Clear
                 </span>
               ) : (
                 <Link
                   to={createPageUrl('Alerts')}
-                  className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 text-[11px] font-semibold"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-400 text-[11px] font-semibold"
                 >
-                  <span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse" />
-                  {alertCount > 0 ? `${alertCount} Alert` : `${warnCount} Warn`}
+                  <span className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse" />
+                  {activeCount} Active
                 </Link>
               )}
               <Link
