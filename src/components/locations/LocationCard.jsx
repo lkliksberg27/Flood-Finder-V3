@@ -13,7 +13,7 @@ const LEVELS = [
 const RADIUS_MIN = 50;
 const RADIUS_MAX = 2000;
 
-export default function LocationCard({ location, sensors, useMetric = true, onDelete, onUpdate }) {
+export default function LocationCard({ location, sensors, useMetric = true, isSelected, onTap, onDelete, onUpdate }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const debounceRef = useRef(null);
@@ -54,10 +54,10 @@ export default function LocationCard({ location, sensors, useMetric = true, onDe
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`rounded-2xl border overflow-hidden ${statusBorder} transition-colors`}
+      className={`rounded-2xl border overflow-hidden ${isSelected ? 'border-blue-500/50 bg-blue-500/10' : statusBorder} transition-colors`}
     >
-      {/* Header */}
-      <div className="p-3 pb-2">
+      {/* Header — tap to fly to location on map */}
+      <div className="p-3 pb-2 cursor-pointer active:bg-white/[0.03] transition-colors" onClick={onTap}>
         <div className="flex items-start gap-2.5">
           <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${dotColor} ${isTriggered ? 'animate-pulse' : ''}`} />
           <div className="flex-1 min-w-0">
