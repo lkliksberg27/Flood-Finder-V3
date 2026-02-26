@@ -97,9 +97,11 @@ function createEntity(collectionName) {
   };
 }
 
+import { createLocalEntity } from './localStorageService';
+
 export const entities = {
   Sensor: createEntity('sensors'),
-  WatchedLocation: createEntity('watchedLocations'),
-  Course: createEntity('courses'),
-  Settings: createEntity('settings'),
+  WatchedLocation: createLocalEntity('watchedLocations'),
+  Course: createLocalEntity('courses'),
+  Settings: createLocalEntity('settings'),
 };
