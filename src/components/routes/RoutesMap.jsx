@@ -151,47 +151,59 @@ export default function RoutesMap({ selectedRoute, sensors, course, locationEnab
     else map.current?.once('load', draw);
   }, [displayRoute, routeColor, glowColor]);
 
-  // Draw sensor markers
+  // Draw sensor markers (matching main Map page style)
   useEffect(() => {
     if (!map.current) return;
+    const DARK_BLUE = '#1e3a8a';
+    const RADIUS_MIN = 25;
+    const RADIUS_MAX = 50;
+
+    const makeCircleCoords = (lat, lng, radiusM) => {
+      const points = 32, earthR = 6371000, d = radiusM / earthR;
+      const latR = lat * Math.PI / 180, lngR = lng * Math.PI / 180;
+      const coords = [];
+      for (let i = 0; i <= points; i++) {
+        const bearing = (i / points) * 2 * Math.PI;
+        const pLat = Math.asin(Math.sin(latR) * Math.cos(d) + Math.cos(latR) * Math.sin(d) * Math.cos(bearing));
+        const pLng = lngR + Math.atan2(Math.sin(bearing) * Math.sin(d) * Math.cos(latR), Math.cos(d) - Math.sin(latR) * Math.sin(pLat));
+        coords.push([pLng * 180 / Math.PI, pLat * 180 / Math.PI]);
+      }
+      return coords;
+    };
 
     const addSensors = () => {
       sensorMarkerRefs.current.forEach(m => m.remove());
       sensorMarkerRefs.current = [];
-      sensors.forEach(sensor => {
+      // Remove old circle layers
+      for (let i = 0; i < (sensors.length + 5); i++) {
+        try {
+          if (map.current.getLayer(`sc-fill-${i}`)) map.current.removeLayer(`sc-fill-${i}`);
+          if (map.current.getLayer(`sc-stroke-${i}`)) map.current.removeLayer(`sc-stroke-${i}`);
+          if (map.current.getSource(`sc-src-${i}`)) map.current.removeSource(`sc-src-${i}`);
+        } catch {}
+      }
+
+      sensors.forEach((sensor, i) => {
         const color = getWaterBlue(sensor.waterLevelCm);
+        const depth = Math.min(1, Math.max(0, (sensor.waterLevelCm || 0) / 100));
+        const radiusM = RADIUS_MIN + depth * (RADIUS_MAX - RADIUS_MIN);
 
+        // Radius circle
+        const srcId = `sc-src-${i}`;
+        map.current.addSource(srcId, {
+          type: 'geojson',
+          data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [makeCircleCoords(sensor.lat, sensor.lng, radiusM)] } },
+        });
+        map.current.addLayer({ id: `sc-fill-${i}`, type: 'fill', source: srcId, paint: { 'fill-color': color, 'fill-opacity': 0.2 } });
+        map.current.addLayer({ id: `sc-stroke-${i}`, type: 'line', source: srcId, paint: { 'line-color': color, 'line-width': 1.5, 'line-opacity': 0.5 } });
+
+        // Dark blue dot + tap popup
         const el = document.createElement('div');
-        el.style.cssText = `position:relative;width:28px;height:36px;cursor:pointer;display:flex;align-items:flex-start;justify-content:center;`;
-
-        if (sensor.status !== 'OK') {
-          const ring = document.createElement('div');
-          ring.style.cssText = `position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:34px;height:34px;border-radius:50%;border:2px solid ${color};opacity:0.5;animation:sensorPulse 1.5s ease-out infinite;`;
-          el.appendChild(ring);
-        }
-
-        const svgNS = 'http://www.w3.org/2000/svg';
-        const svg = document.createElementNS(svgNS, 'svg');
-        svg.setAttribute('width', '28');
-        svg.setAttribute('height', '36');
-        svg.setAttribute('viewBox', '0 0 36 46');
-        svg.style.cssText = 'filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));';
-        const path = document.createElementNS(svgNS, 'path');
-        path.setAttribute('d', 'M18 2C10.27 2 4 8.27 4 16c0 10 14 28 14 28s14-18 14-28C32 8.27 25.73 2 18 2z');
-        path.setAttribute('fill', color);
-        path.setAttribute('stroke', 'rgba(255,255,255,0.85)');
-        path.setAttribute('stroke-width', '2');
-        const circle = document.createElementNS(svgNS, 'circle');
-        circle.setAttribute('cx', '18');
-        circle.setAttribute('cy', '16');
-        circle.setAttribute('r', '6');
-        circle.setAttribute('fill', 'rgba(255,255,255,0.95)');
-        svg.appendChild(path);
-        svg.appendChild(circle);
-        el.appendChild(svg);
-
+        el.style.cssText = `width:14px;height:14px;border-radius:50%;background:${DARK_BLUE};border:2px solid white;box-shadow:0 1px 6px rgba(0,0,0,0.4);cursor:pointer;`;
+        const popup = new mapboxgl.Popup({ closeButton: false, offset: 8, className: 'sensor-popup' })
+          .setHTML(`<div style="background:#151a2e;border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:white;font-family:Inter,system-ui,sans-serif;text-align:center;padding:6px 10px;white-space:nowrap;"><span style="font-weight:700;font-size:14px;color:${color};">${sensor.waterLevelCm ?? 0}</span><span style="font-size:10px;color:#6b7280;margin-left:2px;">cm</span></div>`);
         sensorMarkerRefs.current.push(
-          new mapboxgl.Marker({ element: el, anchor: 'bottom' }).setLngLat([sensor.lng, sensor.lat]).addTo(map.current)
+          new mapboxgl.Marker({ element: el, anchor: 'center' }).setLngLat([sensor.lng, sensor.lat]).setPopup(popup).addTo(map.current)
         );
       });
     };
@@ -202,7 +214,12 @@ export default function RoutesMap({ selectedRoute, sensors, course, locationEnab
 
   return (
     <div className="relative h-full w-full">
-      <style>{`.mapboxgl-ctrl-logo{display:none!important}.mapboxgl-ctrl-attrib{display:none!important} @keyframes sensorPulse{0%{transform:translateX(-50%) scale(0.8);opacity:0.6;}100%{transform:translateX(-50%) scale(1.6);opacity:0;}}`}</style>
+      <style>{`
+        .mapboxgl-popup-content{background:transparent!important;padding:0!important;box-shadow:none!important;}
+        .mapboxgl-popup-tip{display:none!important;}
+        .mapboxgl-ctrl-logo{display:none!important}
+        .mapboxgl-ctrl-attrib{display:none!important}
+      `}</style>
       <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
 
       {/* Route status banner */}
