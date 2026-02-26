@@ -24,16 +24,16 @@ export default function MapHeader({ sensors = [], cityName }) {
             </div>
             <div className="flex items-center gap-1.5">
               {allClear ? (
-                <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 text-[11px] font-semibold">
-                  <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
+                <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/15 text-emerald-300 text-[11px] font-semibold">
+                  <span className="w-1.5 h-1.5 bg-emerald-300 rounded-full" />
                   Clear
                 </span>
               ) : (
                 <Link
                   to={createPageUrl('Alerts')}
-                  className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 text-[11px] font-semibold"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-500/12 border border-red-500/20 text-red-300 text-[11px] font-semibold"
                 >
-                  <span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse" />
+                  <span className="w-1.5 h-1.5 bg-red-300 rounded-full animate-pulse" />
                   {alertCount > 0 ? `${alertCount} Alert` : `${warnCount} Warn`}
                 </Link>
               )}

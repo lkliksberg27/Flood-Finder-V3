@@ -16,8 +16,8 @@ export default function FloodDetailPanel({ sensors }) {
         {sensors.map(sensor => {
           const isAlert = sensor.status === 'ALERT';
           const Icon = isAlert ? AlertTriangle : AlertCircle;
-          const color = isAlert ? 'text-red-400' : 'text-amber-400';
-          const bgColor = isAlert ? 'bg-red-500/10' : 'bg-amber-500/10';
+          const color = isAlert ? 'text-red-300' : 'text-amber-300';
+          const bgColor = isAlert ? 'bg-red-500/8' : 'bg-amber-500/8';
           
           return (
             <div key={sensor.id} className={`${bgColor} rounded-lg p-2 flex items-center justify-between`}>

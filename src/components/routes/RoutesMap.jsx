@@ -158,7 +158,7 @@ export default function RoutesMap({ selectedRoute, sensors, course, locationEnab
       sensorMarkerRefs.current.forEach(m => m.remove());
       sensorMarkerRefs.current = [];
       sensors.forEach(sensor => {
-        const color = sensor.status === 'OK' ? '#34d399' : sensor.status === 'WARN' ? '#fbbf24' : '#f87171';
+        const color = sensor.status === 'OK' ? '#6ee7b7' : sensor.status === 'WARN' ? '#fcd34d' : '#fca5a5';
 
         const el = document.createElement('div');
         el.style.cssText = `position:relative;width:28px;height:36px;cursor:pointer;display:flex;align-items:flex-start;justify-content:center;`;

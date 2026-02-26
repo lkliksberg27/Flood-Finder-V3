@@ -41,11 +41,11 @@ export default function LocationCard({ location, sensors, useMetric = true, onDe
   const worstStatus = triggeredSensors.reduce((worst, s) => levelOrder[s.status] > levelOrder[worst] ? s.status : worst, 'OK');
 
   const statusBorder = isTriggered
-    ? (worstStatus === 'ALERT' ? 'border-red-500/40 bg-red-500/5' : 'border-amber-500/40 bg-amber-500/5')
+    ? (worstStatus === 'ALERT' ? 'border-red-500/20 bg-red-500/5' : 'border-amber-500/20 bg-amber-500/5')
     : 'border-white/5 bg-[#151a2e]';
   const dotColor = isTriggered
-    ? (worstStatus === 'ALERT' ? 'bg-red-500' : 'bg-amber-400')
-    : 'bg-emerald-500';
+    ? (worstStatus === 'ALERT' ? 'bg-red-300' : 'bg-amber-300')
+    : 'bg-emerald-300';
 
   const currentRadius = location.alertRadiusMeters || 500;
   const currentLevel = location.alertLevel || 'WARN';
@@ -74,11 +74,11 @@ export default function LocationCard({ location, sensors, useMetric = true, onDe
 
         {/* Status badge */}
         {isTriggered ? (
-          <div className={`mt-2 text-xs px-2.5 py-1.5 rounded-lg ${worstStatus === 'ALERT' ? 'bg-red-500/15 text-red-400 border border-red-500/25' : 'bg-amber-500/15 text-amber-400 border border-amber-500/25'}`}>
+          <div className={`mt-2 text-xs px-2.5 py-1.5 rounded-lg ${worstStatus === 'ALERT' ? 'bg-red-500/8 text-red-300 border border-red-500/15' : 'bg-amber-500/8 text-amber-300 border border-amber-500/15'}`}>
             {triggeredSensors.length} sensor{triggeredSensors.length > 1 ? 's' : ''} {worstStatus === 'ALERT' ? 'flooding' : 'with warning'} within {useMetric ? `${currentRadius}m` : `${Math.round(currentRadius * 3.28084)} ft`}
           </div>
         ) : (
-          <div className="mt-1.5 text-xs text-emerald-400">✓ No flooding nearby</div>
+          <div className="mt-1.5 text-xs text-emerald-300/80">✓ No flooding nearby</div>
         )}
       </div>
 

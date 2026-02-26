@@ -9,12 +9,12 @@ const MAX_LEVEL = 100; // cm considered max for bar
 
 export default function AlertCard({ sensor, index }) {
   const isAlert = sensor.status === 'ALERT';
-  const iconColor = isAlert ? 'text-red-400' : 'text-amber-400';
-  const bgColor = isAlert ? 'bg-red-500/8' : 'bg-amber-500/8';
-  const borderColor = isAlert ? 'border-red-500/25' : 'border-amber-500/25';
-  const accentColor = isAlert ? 'bg-red-500' : 'bg-amber-400';
-  const barFrom = isAlert ? 'from-red-500' : 'from-amber-500';
-  const barTo = isAlert ? 'to-red-400' : 'to-amber-300';
+  const iconColor = isAlert ? 'text-red-300' : 'text-amber-300';
+  const bgColor = isAlert ? 'bg-red-500/5' : 'bg-amber-500/5';
+  const borderColor = isAlert ? 'border-red-500/15' : 'border-amber-500/15';
+  const accentColor = isAlert ? 'bg-red-400' : 'bg-amber-300';
+  const barFrom = isAlert ? 'from-red-400' : 'from-amber-400';
+  const barTo = isAlert ? 'to-red-300' : 'to-amber-200';
   const Icon = isAlert ? AlertTriangle : AlertCircle;
   const fillPct = Math.min(100, Math.round((sensor.waterLevelCm / MAX_LEVEL) * 100));
 
@@ -31,7 +31,7 @@ export default function AlertCard({ sensor, index }) {
       <div className="flex-1 p-4 space-y-3">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
-            <div className={`p-2.5 rounded-xl ${isAlert ? 'bg-red-500/20' : 'bg-amber-500/20'} flex-shrink-0`}>
+            <div className={`p-2.5 rounded-xl ${isAlert ? 'bg-red-500/10' : 'bg-amber-500/10'} flex-shrink-0`}>
               <Icon className={`w-6 h-6 ${iconColor}`} />
             </div>
             <div>
@@ -74,8 +74,8 @@ export default function AlertCard({ sensor, index }) {
           to={createPageUrl('Map')}
           className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
             isAlert
-              ? 'bg-red-500/15 text-red-400 hover:bg-red-500/25'
-              : 'bg-amber-500/15 text-amber-400 hover:bg-amber-500/25'
+              ? 'bg-red-500/10 text-red-300 hover:bg-red-500/15'
+              : 'bg-amber-500/10 text-amber-300 hover:bg-amber-500/15'
           }`}
         >
           <MapPin className="w-3 h-3" />
