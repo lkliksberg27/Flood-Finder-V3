@@ -246,21 +246,25 @@ export default function MapPage() {
       });
 
       // ── Draw sensor radius circles + dot markers ──
-      const SENSOR_RADIUS_M = 30;
+      const SENSOR_RADIUS_MIN = 25;
+      const SENSOR_RADIUS_MAX = 50;
+      const DARK_BLUE = '#1e3a8a';
       sensors.forEach((sensor, i) => {
         const color = getWaterBlue(sensor.waterLevelCm);
+        const depth = Math.min(1, Math.max(0, (sensor.waterLevelCm || 0) / 100));
+        const radiusM = SENSOR_RADIUS_MIN + depth * (SENSOR_RADIUS_MAX - SENSOR_RADIUS_MIN);
 
         // Radius circle
         const srcId = `sc-src-${i}`;
         m.addSource(srcId, {
           type: 'geojson',
-          data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [makeCircleCoords(sensor.lat, sensor.lng, SENSOR_RADIUS_M)] } },
+          data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [makeCircleCoords(sensor.lat, sensor.lng, radiusM)] } },
         });
         m.addLayer({ id: `sc-fill-${i}`, type: 'fill', source: srcId, paint: { 'fill-color': color, 'fill-opacity': 0.2 } });
         m.addLayer({ id: `sc-stroke-${i}`, type: 'line', source: srcId, paint: { 'line-color': color, 'line-width': 1.5, 'line-opacity': 0.5 } });
 
         const el = document.createElement('div');
-        el.style.cssText = `width:16px;height:16px;border-radius:50%;background:${color};border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);cursor:pointer;`;
+        el.style.cssText = `width:16px;height:16px;border-radius:50%;background:${DARK_BLUE};border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);cursor:pointer;`;
         const mk = new mapboxgl.Marker({ element: el, anchor: 'center' })
           .setLngLat([sensor.lng, sensor.lat])
           .addTo(m);
