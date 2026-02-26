@@ -1,20 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cd /c/Users/lkliksberg27/Desktop/Flood-Finder-V3 && npm install firebase 2>&1)",
-      "Bash(cd /c/Users/lkliksberg27/Desktop/Flood-Finder-V3 && npm uninstall @base44/sdk @base44/vite-plugin 2>&1)",
-      "Bash(head:*)",
-      "Bash(cd /c/Users/lkliksberg27/Desktop/Flood-Finder-V3 && npx vite build 2>&1)",
-      "Bash(cd:*)",
-      "Bash(cd /c/Users/lkliksberg27/Desktop/Flood-Finder-V3 && git push origin main 2>&1)",
-      "Bash(tail:*)",
-      "Bash(cd \"C:/Users/lkliksberg27/Desktop/Flood-Finder-V3\" && npx vite build 2>&1)",
-      "Bash(grep:*)",
-      "Bash(echo EXIT: $?:*)",
-      "Bash(cd \"C:\\\\Users\\\\lkliksberg27\\\\Desktop\\\\Flood-Finder-V3\" && npx vite build 2>&1)",
-      "Bash(cd \"C:\\\\Users\\\\lkliksberg27\\\\Desktop\\\\Flood-Finder-V3\" && npx vite build --logLevel info 2>&1)",
-      "Bash(cd C:\\\\Users\\\\lkliksberg27\\\\Desktop\\\\Flood-Finder-V3:*)",
-      "Bash(echo EXIT_CODE=$?:*)"
+      "Bash(cd:*)"
     ]
   }
 }

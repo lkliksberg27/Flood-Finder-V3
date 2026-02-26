@@ -1,9 +1,9 @@
 import React from 'react';
 
 const items = [
-  { color: '#6ee7b7', label: 'Clear' },
-  { color: '#fcd34d', label: 'Warning' },
-  { color: '#fca5a5', label: 'Flooding' },
+  { color: '#93c5fd', label: 'Low' },
+  { color: '#3b82f6', label: 'Mid' },
+  { color: '#1e3a8a', label: 'Deep' },
 ];
 
 export default function MapLegend() {
