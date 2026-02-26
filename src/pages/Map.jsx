@@ -127,22 +127,24 @@ export default function MapPage() {
     // Hard gate: never call geolocation unless setting is on
     if (!navigator.geolocation) return;
 
+    const abortController = new AbortController();
+
     navigator.geolocation.getCurrentPosition((pos) => {
-      if (!map.current) return;
+      if (!map.current || abortController.signal.aborted) return;
       const { longitude, latitude } = pos.coords;
       userCoordsRef.current = { lat: latitude, lng: longitude };
 
       map.current.flyTo({ center: [longitude, latitude], zoom: 14, duration: 1200 });
 
-      // Reverse geocode for city name
-      fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${MAPBOX_TOKEN}`)
+      // Reverse geocode for city name (cancellable)
+      fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${MAPBOX_TOKEN}`, { signal: abortController.signal })
         .then(r => r.json())
         .then(data => {
           const place = data.features?.find(f => f.place_type.includes('place'));
           setCityName(place?.text || '');
         })
         .catch((err) => {
-          console.error('Reverse geocode failed:', err);
+          if (err.name !== 'AbortError') console.error('Reverse geocode failed:', err);
         });
 
       // User dot — remove old one first then recreate
@@ -155,6 +157,8 @@ export default function MapPage() {
     }, (err) => {
       console.warn('Geolocation denied or failed:', err?.message);
     }, { timeout: 6000 });
+
+    return () => { abortController.abort(); };
   }, [locationEnabled, mapReady]);
 
   const makeCircleCoords = (lat, lng, radiusM) => {
