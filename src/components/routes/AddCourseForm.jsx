@@ -80,6 +80,7 @@ export default function AddCourseForm({ onClose, onSave }) {
     if (!name.trim()) { setError('Please enter a location name'); return; }
     if (!endCoords) { setError('Please select a destination from the list'); return; }
     if (!alertMode) { setError('Please select an alert preference'); return; }
+    if (alertMode === 'schedule' && scheduleDays.length === 0) { setError('Please select at least one day'); return; }
     setIsSaving(true);
     setError('');
     await onSave({

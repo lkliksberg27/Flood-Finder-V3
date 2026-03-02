@@ -9,7 +9,7 @@ export default function FloodSwitch({ checked, onCheckedChange, color = '#3b82f6
       aria-checked={checked}
       onClick={() => onCheckedChange(!checked)}
       className={cn(
-        'relative w-[52px] h-[30px] rounded-full flex-shrink-0 transition-colors duration-300 focus:outline-none',
+        'relative w-[52px] h-[30px] rounded-full flex-shrink-0 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c1021]',
         checked ? 'shadow-lg' : ''
       )}
       style={{
