@@ -44,6 +44,7 @@ export default function LocationsPage() {
   const markersRef = useRef([]);
   const sensorMarkersRef = useRef([]);
   const prevSensorCount = useRef(0);
+  const hasFittedRef = useRef(false);
 
   const { data: settingsList = [] } = useQuery({
     queryKey: ['settings'],
@@ -176,8 +177,9 @@ export default function LocationsPage() {
         markersRef.current.push(mk);
       });
 
-      // Fit bounds to show everything on first load
-      if ((locations.length > 0 || sensors.length > 0) && !selectedLocId) {
+      // Fit bounds only on first load
+      if (!hasFittedRef.current && (locations.length > 0 || sensors.length > 0)) {
+        hasFittedRef.current = true;
         const bounds = new mapboxgl.LngLatBounds();
         locations.forEach(loc => bounds.extend([loc.lng, loc.lat]));
         sensors.forEach(s => bounds.extend([s.lng, s.lat]));

@@ -12,6 +12,7 @@ export default function RoutesMap({ selectedRoute, sensors, course, locationEnab
    const mapContainer = useRef(null);
    const map = useRef(null);
    const sensorMarkerRefs = useRef([]);
+   const prevSensorCount = useRef(0);
    const routeMarkerRefs = useRef([]);
    const userMarkerRef = useRef(null);
    const [userLocation, setUserLocation] = useState(null);
@@ -172,16 +173,17 @@ export default function RoutesMap({ selectedRoute, sensors, course, locationEnab
     };
 
     const addSensors = () => {
-      sensorMarkerRefs.current.forEach(m => m.remove());
-      sensorMarkerRefs.current = [];
-      // Remove old circle layers
-      for (let i = 0; i < (sensors.length + 5); i++) {
+      // Remove old circle layers using previous count
+      for (let i = 0; i < prevSensorCount.current + 5; i++) {
         try {
           if (map.current.getLayer(`sc-fill-${i}`)) map.current.removeLayer(`sc-fill-${i}`);
           if (map.current.getLayer(`sc-stroke-${i}`)) map.current.removeLayer(`sc-stroke-${i}`);
           if (map.current.getSource(`sc-src-${i}`)) map.current.removeSource(`sc-src-${i}`);
         } catch {}
       }
+      sensorMarkerRefs.current.forEach(m => m.remove());
+      sensorMarkerRefs.current = [];
+      prevSensorCount.current = sensors.length;
 
       sensors.forEach((sensor, i) => {
         const color = getWaterBlue(sensor.waterLevelCm);

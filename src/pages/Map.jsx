@@ -17,6 +17,8 @@ export default function MapPage() {
   const map = useRef(null);
   const markersRef = useRef([]);
   const locationMarkersRef = useRef([]);
+  const prevWlCountRef = useRef(0);
+  const prevScCountRef = useRef(0);
   const geolocateRef = useRef(null);
   const userDotRef = useRef(null);
   const [cityName, setCityName] = useState('');
@@ -184,33 +186,29 @@ export default function MapPage() {
       const m = map.current;
       if (!m) return;
 
-      // ── Remove old location markers ──
-      locationMarkersRef.current.forEach(mk => mk.remove());
-      locationMarkersRef.current = [];
-
-      // ── Remove old location circle layers (only up to actual count) ──
-      const prevWlCount = locationMarkersRef.current.length || watchedLocations.length;
-      for (let i = 0; i < prevWlCount + 5; i++) {
+      // ── Remove old location circle layers ──
+      for (let i = 0; i < prevWlCountRef.current + 5; i++) {
         try {
           if (m.getLayer(`wl-stroke-${i}`)) m.removeLayer(`wl-stroke-${i}`);
           if (m.getLayer(`wl-fill-${i}`)) m.removeLayer(`wl-fill-${i}`);
           if (m.getSource(`wl-src-${i}`)) m.removeSource(`wl-src-${i}`);
         } catch {}
       }
+      locationMarkersRef.current.forEach(mk => mk.remove());
+      locationMarkersRef.current = [];
+      prevWlCountRef.current = watchedLocations.length;
 
       // ── Remove old sensor layers ──
-      const prevScCount = markersRef.current.length || sensors.length;
-      for (let i = 0; i < prevScCount + 5; i++) {
+      for (let i = 0; i < prevScCountRef.current + 5; i++) {
         try {
           if (m.getLayer(`sc-fill-${i}`)) m.removeLayer(`sc-fill-${i}`);
           if (m.getLayer(`sc-stroke-${i}`)) m.removeLayer(`sc-stroke-${i}`);
           if (m.getSource(`sc-src-${i}`)) m.removeSource(`sc-src-${i}`);
         } catch {}
       }
-
-      // ── Remove old sensor dot markers ──
       markersRef.current.forEach(mk => mk.remove());
       markersRef.current = [];
+      prevScCountRef.current = sensors.length;
 
       // ── Draw watched location circles ──
       watchedLocations.forEach((loc, i) => {
