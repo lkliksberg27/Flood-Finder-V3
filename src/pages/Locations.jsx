@@ -164,7 +164,7 @@ export default function LocationsPage() {
       locations.forEach(loc => {
         const isSelected = loc.id === selectedLocId;
         const el = document.createElement('div');
-        el.style.cssText = `width:${isSelected ? 32 : 26}px;height:${isSelected ? 32 : 26}px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${isSelected ? '#3b82f6' : '#4285f4'};border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,${isSelected ? '0.6' : '0.4'});cursor:pointer;transition:all 0.2s;`;
+        el.style.cssText = `width:${isSelected ? 32 : 26}px;height:${isSelected ? 32 : 26}px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${isSelected ? '#3b82f6' : '#4285f4'};border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,${isSelected ? '0.6' : '0.4'});cursor:pointer;`;
         const inner = document.createElement('div');
         inner.style.cssText = `width:${isSelected ? 10 : 7}px;height:${isSelected ? 10 : 7}px;border-radius:50%;background:white;margin:${isSelected ? '9px' : '7.5px'} auto 0;`;
         el.appendChild(inner);
