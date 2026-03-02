@@ -34,7 +34,7 @@ export default function MapPage() {
       const { longitude, latitude } = pos.coords;
       map.current.flyTo({ center: [longitude, latitude], zoom: 16, duration: 1000 });
     }, (err) => {
-      console.warn('Locate me failed:', err?.message);
+      // silently fail
     }, { timeout: 6000 });
   };
 
@@ -145,7 +145,7 @@ export default function MapPage() {
           setCityName(place?.text || '');
         })
         .catch((err) => {
-          if (err.name !== 'AbortError') console.error('Reverse geocode failed:', err);
+          if (err.name === 'AbortError') return;
         });
 
       // User dot — remove old one first then recreate
@@ -156,7 +156,7 @@ export default function MapPage() {
         .setLngLat([longitude, latitude])
         .addTo(map.current);
     }, (err) => {
-      console.warn('Geolocation denied or failed:', err?.message);
+      // silently fail
     }, { timeout: 6000 });
 
     return () => { abortController.abort(); };

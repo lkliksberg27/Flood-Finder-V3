@@ -35,7 +35,7 @@ export default function AddLocationForm({ onSave, onClose }) {
         const data = await res.json();
         setSuggestions(data.features || []);
       } catch (err) {
-        if (err.name !== 'AbortError') console.error('Address search failed:', err);
+        if (err.name === 'AbortError') return;
       }
     }, 350);
   };
