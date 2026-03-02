@@ -41,9 +41,7 @@ export default function LocationsPage() {
   const [selectedLocId, setSelectedLocId] = useState(null);
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
-  const markersRef = useRef([]);
-  const sensorMarkersRef = useRef([]);
-  const prevSensorCount = useRef(0);
+  const popupRef = useRef(null);
   const hasFittedRef = useRef(false);
 
   const { data: settingsList = [] } = useQuery({
@@ -116,66 +114,94 @@ export default function LocationsPage() {
     return () => { mapRef.current?.remove(); mapRef.current = null; };
   }, []);
 
-  // Draw everything on map: sensors + location markers
+  // Draw everything on map using native Mapbox layers (no DOM marker jiggle)
   useEffect(() => {
     if (!mapRef.current) return;
     const m = mapRef.current;
-    const draw = () => {
-      // ── Clean up old sensor layers ──
-      sensorMarkersRef.current.forEach(mk => mk.remove());
-      sensorMarkersRef.current = [];
-      for (let i = 0; i < prevSensorCount.current + 5; i++) {
-        try {
-          if (m.getLayer(`sc-fill-${i}`)) m.removeLayer(`sc-fill-${i}`);
-          if (m.getLayer(`sc-stroke-${i}`)) m.removeLayer(`sc-stroke-${i}`);
-          if (m.getSource(`sc-src-${i}`)) m.removeSource(`sc-src-${i}`);
-        } catch {}
-      }
-      prevSensorCount.current = sensors.length;
-
-      // ── Draw sensor radius circles + dot markers ──
-      sensors.forEach((sensor, i) => {
+    const update = () => {
+      // ── Build GeoJSON for sensor radius circles ──
+      const radiusFeatures = sensors.map((sensor) => {
         const color = getWaterBlue(sensor.waterLevelCm);
         const depth = Math.min(1, Math.max(0, (sensor.waterLevelCm || 0) / 100));
         const radiusM = SENSOR_RADIUS_MIN + depth * (SENSOR_RADIUS_MAX - SENSOR_RADIUS_MIN);
+        return {
+          type: 'Feature',
+          geometry: { type: 'Polygon', coordinates: [makeCircleCoords(sensor.lat, sensor.lng, radiusM)] },
+          properties: { color },
+        };
+      });
 
-        const srcId = `sc-src-${i}`;
-        m.addSource(srcId, {
-          type: 'geojson',
-          data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [makeCircleCoords(sensor.lat, sensor.lng, radiusM)] } },
+      // ── Build GeoJSON for sensor center dots ──
+      const dotFeatures = sensors.map((sensor) => ({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [sensor.lng, sensor.lat] },
+        properties: { waterLevelCm: sensor.waterLevelCm ?? 0, color: getWaterBlue(sensor.waterLevelCm) },
+      }));
+
+      // ── Build GeoJSON for location pins ──
+      const pinFeatures = locations.map((loc) => ({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [loc.lng, loc.lat] },
+        properties: { name: loc.name, id: loc.id, isSelected: loc.id === selectedLocId },
+      }));
+
+      const radiusFC = { type: 'FeatureCollection', features: radiusFeatures };
+      const dotsFC = { type: 'FeatureCollection', features: dotFeatures };
+      const pinsFC = { type: 'FeatureCollection', features: pinFeatures };
+
+      if (m.getSource('sensor-radii')) {
+        m.getSource('sensor-radii').setData(radiusFC);
+        m.getSource('sensor-dots').setData(dotsFC);
+        m.getSource('location-pins').setData(pinsFC);
+      } else {
+        // Sensor radius circles
+        m.addSource('sensor-radii', { type: 'geojson', data: radiusFC });
+        m.addLayer({ id: 'sensor-radii-fill', type: 'fill', source: 'sensor-radii', paint: { 'fill-color': ['get', 'color'], 'fill-opacity': 0.2 } });
+        m.addLayer({ id: 'sensor-radii-stroke', type: 'line', source: 'sensor-radii', paint: { 'line-color': ['get', 'color'], 'line-width': 1.5, 'line-opacity': 0.5 } });
+
+        // Sensor center dots (native circle layer)
+        m.addSource('sensor-dots', { type: 'geojson', data: dotsFC });
+        m.addLayer({
+          id: 'sensor-dots-layer', type: 'circle', source: 'sensor-dots',
+          paint: { 'circle-radius': 7, 'circle-color': DARK_BLUE, 'circle-stroke-width': 2, 'circle-stroke-color': '#ffffff' },
         });
-        m.addLayer({ id: `sc-fill-${i}`, type: 'fill', source: srcId, paint: { 'fill-color': color, 'fill-opacity': 0.2 } });
-        m.addLayer({ id: `sc-stroke-${i}`, type: 'line', source: srcId, paint: { 'line-color': color, 'line-width': 1.5, 'line-opacity': 0.5 } });
 
-        const el = document.createElement('div');
-        el.style.cssText = `width:14px;height:14px;border-radius:50%;background:${DARK_BLUE};border:2px solid white;box-shadow:0 1px 6px rgba(0,0,0,0.4);cursor:pointer;`;
-        const popup = new mapboxgl.Popup({ closeButton: false, offset: 8, className: 'sensor-popup' })
-          .setHTML(`<div style="background:#151a2e;border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:white;font-family:Inter,system-ui,sans-serif;text-align:center;padding:6px 10px;white-space:nowrap;"><span style="font-weight:700;font-size:14px;color:${color};">${sensor.waterLevelCm ?? 0}</span><span style="font-size:10px;color:#6b7280;margin-left:2px;">cm</span></div>`);
-        const mk = new mapboxgl.Marker({ element: el, anchor: 'center' })
-          .setLngLat([sensor.lng, sensor.lat])
-          .setPopup(popup)
-          .addTo(m);
-        sensorMarkersRef.current.push(mk);
-      });
+        // Location pins (native circle layer)
+        m.addSource('location-pins', { type: 'geojson', data: pinsFC });
+        m.addLayer({
+          id: 'location-pins-layer', type: 'circle', source: 'location-pins',
+          paint: {
+            'circle-radius': ['case', ['==', ['get', 'isSelected'], true], 14, 11],
+            'circle-color': ['case', ['==', ['get', 'isSelected'], true], '#3b82f6', '#4285f4'],
+            'circle-stroke-width': 2.5,
+            'circle-stroke-color': '#ffffff',
+          },
+        });
 
-      // ── Draw location pin markers ──
-      markersRef.current.forEach(mk => mk.remove());
-      markersRef.current = [];
-      locations.forEach(loc => {
-        const isSelected = loc.id === selectedLocId;
-        const el = document.createElement('div');
-        el.style.cssText = `width:${isSelected ? 32 : 26}px;height:${isSelected ? 32 : 26}px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${isSelected ? '#3b82f6' : '#4285f4'};border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,${isSelected ? '0.6' : '0.4'});cursor:pointer;`;
-        const inner = document.createElement('div');
-        inner.style.cssText = `width:${isSelected ? 10 : 7}px;height:${isSelected ? 10 : 7}px;border-radius:50%;background:white;margin:${isSelected ? '9px' : '7.5px'} auto 0;`;
-        el.appendChild(inner);
-        const mk = new mapboxgl.Marker({ element: el, anchor: 'bottom-left' })
-          .setLngLat([loc.lng, loc.lat])
-          .setPopup(new mapboxgl.Popup({ closeButton: false, offset: 14, className: 'sensor-popup' }).setHTML(
-            `<div style="background:#151a2e;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:6px 10px;color:white;font-family:Inter,sans-serif;"><div style="font-weight:600;font-size:11px;">${loc.name}</div></div>`
-          ))
-          .addTo(m);
-        markersRef.current.push(mk);
-      });
+        // Click handlers (set up once)
+        m.on('click', 'sensor-dots-layer', (e) => {
+          if (!e.features?.length) return;
+          const f = e.features[0];
+          popupRef.current?.remove();
+          popupRef.current = new mapboxgl.Popup({ closeButton: false, offset: 10, className: 'sensor-popup' })
+            .setLngLat(e.lngLat)
+            .setHTML(`<div style="background:#151a2e;border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:white;font-family:Inter,system-ui,sans-serif;text-align:center;padding:6px 10px;white-space:nowrap;"><span style="font-weight:700;font-size:14px;color:${f.properties.color};">${f.properties.waterLevelCm}</span><span style="font-size:10px;color:#6b7280;margin-left:2px;">cm</span></div>`)
+            .addTo(m);
+        });
+        m.on('click', 'location-pins-layer', (e) => {
+          if (!e.features?.length) return;
+          const f = e.features[0];
+          popupRef.current?.remove();
+          popupRef.current = new mapboxgl.Popup({ closeButton: false, offset: 16, className: 'sensor-popup' })
+            .setLngLat(e.lngLat)
+            .setHTML(`<div style="background:#151a2e;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:6px 10px;color:white;font-family:Inter,sans-serif;"><div style="font-weight:600;font-size:11px;">${f.properties.name}</div></div>`)
+            .addTo(m);
+        });
+        m.on('mouseenter', 'sensor-dots-layer', () => { m.getCanvas().style.cursor = 'pointer'; });
+        m.on('mouseleave', 'sensor-dots-layer', () => { m.getCanvas().style.cursor = ''; });
+        m.on('mouseenter', 'location-pins-layer', () => { m.getCanvas().style.cursor = 'pointer'; });
+        m.on('mouseleave', 'location-pins-layer', () => { m.getCanvas().style.cursor = ''; });
+      }
 
       // Fit bounds only on first load
       if (!hasFittedRef.current && (locations.length > 0 || sensors.length > 0)) {
@@ -186,8 +212,8 @@ export default function LocationsPage() {
         m.fitBounds(bounds, { padding: 60, maxZoom: 14, duration: 500 });
       }
     };
-    if (m.isStyleLoaded()) draw();
-    else m.once('style.load', draw);
+    if (m.isStyleLoaded()) update();
+    else m.once('style.load', update);
   }, [locations, sensors, selectedLocId]);
 
   const handleLocationTap = useCallback((locId) => {
