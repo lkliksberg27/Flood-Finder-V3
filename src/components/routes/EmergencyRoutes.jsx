@@ -188,7 +188,6 @@ export default function EmergencyRoutes({ onRouteReady, sensors = [], alertRadiu
         onRouteReady(route, place);
       }
     } catch (e) {
-      console.error('Route error:', e);
       setLocationError('Enable location access.');
     }
     setLoadingCat(null);
@@ -243,7 +242,6 @@ export default function EmergencyRoutes({ onRouteReady, sensors = [], alertRadiu
         onRouteReady(fastest.route, fastest.place);
       }
     } catch (e) {
-      console.error('Emergency route error:', e);
       setLocationError('Error finding fastest route.');
     }
     setLoading(false);

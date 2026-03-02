@@ -81,6 +81,10 @@ export default function SettingsPage() {
   const saveTimer = useRef(null);
   const pendingData = useRef(null);
 
+  useEffect(() => {
+    return () => { clearTimeout(saveTimer.current); };
+  }, []);
+
   const debouncedSave = useCallback((newSettings) => {
     pendingData.current = newSettings;
     if (saveTimer.current) clearTimeout(saveTimer.current);
@@ -134,6 +138,15 @@ export default function SettingsPage() {
                     Allow Notifications
                   </Button>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {local.notificationsEnabled && notifPermission === 'denied' && (
+            <div className="py-3">
+              <div className="flex items-center gap-3 bg-red-500/10 rounded-xl p-3 border border-red-500/20">
+                <Bell className="w-4 h-4 text-red-400 shrink-0" />
+                <p className="text-xs text-red-300 flex-1">Notifications are blocked. Open your device settings to re-enable them for this app.</p>
               </div>
             </div>
           )}

@@ -86,7 +86,7 @@ export default function SensorsPage() {
           <EmptyState
             icon={Search}
             title="No sensors found"
-            description={`No sensors with "${filter === 'WARN' ? 'Warning' : filter === 'ALERT' ? 'Flooding' : filter}" status right now.`}
+            description={filter === 'ALL' ? 'No sensors are connected yet.' : `No sensors with ${filter === 'WARN' ? 'warning' : filter === 'ALERT' ? 'flooding' : 'clear'} status right now.`}
           />
         )}
         {filtered.map((sensor, i) => {

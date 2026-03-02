@@ -12,7 +12,7 @@ import PullToRefresh from '@/components/ui/PullToRefresh';
 import { motion } from 'framer-motion';
 
 export default function AlertsPage() {
-  const { data: sensors = [], isLoading, refetch } = useQuery({
+  const { data: sensors = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['sensors'],
     queryFn: () => entities.Sensor.list(),
     refetchInterval: 30000,
@@ -67,7 +67,7 @@ export default function AlertsPage() {
                 <p className="text-[11px] text-gray-500">Active flooding warnings</p>
               </div>
             </div>
-            <Link to="/Settings" className="flex items-center justify-center w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all">
+            <Link to="/Settings" aria-label="Open settings" className="flex items-center justify-center w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all">
               <Settings className="w-4 h-4 text-gray-400" />
             </Link>
           </div>
@@ -76,6 +76,12 @@ export default function AlertsPage() {
 
       <PullToRefresh onRefresh={refetch}>
         <div className="px-4 py-4">
+          {isError && (
+            <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 mb-4">
+              <Bell className="w-4 h-4 text-red-400 flex-shrink-0" />
+              <span className="text-red-400 text-sm">Could not load alerts. Pull down to retry.</span>
+            </div>
+          )}
           {alertSensors.length > 0 ? (
             <>
               <AlertSummary sensors={sensors} />

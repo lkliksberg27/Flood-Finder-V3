@@ -112,7 +112,7 @@ export default function DrivingMode({ route, course, sensors, onClose, locationE
           map.current.panTo([lng, lat], { duration: 800 });
         }
       },
-      (err) => { console.warn('GPS watch error:', err?.message); },
+      () => {},
       { enableHighAccuracy: true, maximumAge: 1000 }
     );
 

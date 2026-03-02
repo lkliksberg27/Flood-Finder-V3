@@ -30,6 +30,7 @@ export default function BottomNav() {
               <Link
                 key={tab.name}
                 to={createPageUrl(tab.page)}
+                aria-label={tab.label}
                 className="relative flex flex-col items-center justify-end gap-1 pb-1 min-w-[52px] min-h-[44px]"
               >
                 {/* Sliding indicator bar */}
