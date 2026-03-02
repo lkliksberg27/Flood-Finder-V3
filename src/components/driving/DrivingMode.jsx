@@ -48,10 +48,13 @@ export default function DrivingMode({ route, course, sensors, onClose, locationE
   const [offRoute, setOffRoute] = useState(false);
   const [offRouteAnnounced, setOffRouteAnnounced] = useState(false);
   const [toast, setToast] = useState(null);
+  const [remainingMiles, setRemainingMiles] = useState(null);
+  const [remainingMins, setRemainingMins] = useState(null);
 
   const watchIdRef = useRef(null);
   const prevPosRef = useRef(null);
   const prevTimeRef = useRef(null);
+  const progressIndexRef = useRef(0);
 
   const floodingSensors = route ? checkRouteFlooding(route, sensors) : [];
   const isClear = floodingSensors.length === 0;
@@ -111,6 +114,36 @@ export default function DrivingMode({ route, course, sensors, onClose, locationE
           markerRef.current.setLngLat([lng, lat]);
           map.current.panTo([lng, lat], { duration: 800 });
         }
+
+        // Trim route to only show remaining path ahead of user
+        if (route?.coordinates?.length >= 2 && map.current) {
+          let minDist = Infinity;
+          let nearestIdx = progressIndexRef.current;
+          for (let i = progressIndexRef.current; i < route.coordinates.length; i++) {
+            const d = getDistanceMeters(lat, lng, route.coordinates[i].lat, route.coordinates[i].lng);
+            if (d < minDist) { minDist = d; nearestIdx = i; }
+          }
+          if (nearestIdx > progressIndexRef.current) progressIndexRef.current = nearestIdx;
+
+          const remaining = route.coordinates.slice(progressIndexRef.current);
+          if (remaining.length >= 2) {
+            const trimmedCoords = [[lng, lat], ...remaining.map(c => [c.lng, c.lat])];
+            const geojson = { type: 'Feature', geometry: { type: 'LineString', coordinates: trimmedCoords } };
+            if (map.current.getSource('dm-glow')) map.current.getSource('dm-glow').setData(geojson);
+            if (map.current.getSource('dm-route')) map.current.getSource('dm-route').setData(geojson);
+          }
+
+          // Update remaining distance & ETA
+          let remDist = getDistanceMeters(lat, lng, remaining[0].lat, remaining[0].lng);
+          for (let i = 0; i < remaining.length - 1; i++) {
+            remDist += getDistanceMeters(remaining[i].lat, remaining[i].lng, remaining[i+1].lat, remaining[i+1].lng);
+          }
+          const remMiles = remDist / 1609.34;
+          setRemainingMiles(remMiles);
+          const totalDist = route.distanceMiles || 1;
+          const totalTime = (route.durationMinutes || 0) + (route.trafficPenaltyMinutes || 0);
+          setRemainingMins(Math.round((remMiles / totalDist) * totalTime));
+        }
       },
       () => {},
       { enableHighAccuracy: true, maximumAge: 1000 }
@@ -167,7 +200,7 @@ export default function DrivingMode({ route, course, sensors, onClose, locationE
         el.style.cssText = `width:14px;height:14px;border-radius:50%;background:${bg};border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.5);`;
         return el;
       };
-      routeMarkerRefs.current.push(new mapboxgl.Marker({ element: mkEl('#34d399') }).setLngLat(coords[0]).addTo(map.current));
+      // Only destination pin — user's blue dot shows current position
       routeMarkerRefs.current.push(new mapboxgl.Marker({ element: mkEl('#f87171') }).setLngLat(coords[coords.length-1]).addTo(map.current));
 
       // User location marker
@@ -190,7 +223,8 @@ export default function DrivingMode({ route, course, sensors, onClose, locationE
 
 
 
-  const totalMins = (route?.durationMinutes || 0) + (route?.trafficPenaltyMinutes || 0);
+  const totalMins = remainingMins ?? ((route?.durationMinutes || 0) + (route?.trafficPenaltyMinutes || 0));
+  const displayMiles = remainingMiles ?? route?.distanceMiles;
 
   return (
     <motion.div
@@ -297,7 +331,7 @@ export default function DrivingMode({ route, course, sensors, onClose, locationE
           <div className="flex items-center gap-5 text-right">
             <div>
               <p className="text-xs text-gray-500">Distance</p>
-              <p className="text-white font-semibold text-sm">{formatDist(route?.distanceMiles)}</p>
+              <p className="text-white font-semibold text-sm">{formatDist(displayMiles)}</p>
             </div>
             <div>
               <p className="text-xs text-gray-500">ETA</p>
