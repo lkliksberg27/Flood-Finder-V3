@@ -24,7 +24,7 @@ export default function AlertCard({ sensor, index }) {
       <div className="flex-1 p-4 space-y-3">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
-            <div className={`p-2.5 rounded-xl bg-blue-500/20 flex-shrink-0`}>
+            <div className={`p-2.5 rounded-xl ${tw.bg} flex-shrink-0`}>
               <Droplets className={`w-6 h-6 ${tw.text}`} />
             </div>
             <div>
